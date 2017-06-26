@@ -32,6 +32,7 @@ type modelConfig
   windContrib::Float64 #The percentaje contribution of the wind into the model
   turbulentDiff::Float64 #Value of turbulent diffusion (When advecting particles)
   diffusion::Float64 #Variance of the diffusion (in degrees) when initializing particles
+  model::String #Model used, HYCOM and ADCIRC
 end
 
 type vectorFields
@@ -75,4 +76,38 @@ type Particle
   currTimeStep::Int64 #The current time step the particle is. It start at 1 and increase by one for each deltaT
   isAlive::Bool #Indicates if the particle is alive
   status::String #String that indicates the status of the particle. Each model shoud define it
+end
+
+
+type VectorFieldsADCIRC
+  U::Array{Float64,2} #U variable for current time
+  V::Array{Float64,2} #V variable for current time
+  UT2::Array{Float64,2} #U variable for nex time
+  VT2::Array{Float64,2} #V variable for nex time
+  UW::Array{Float64,2} #U (wind) variable for current time
+  VW::Array{Float64,2}#V (wind) variable for current time
+  UWR::Array{Float64,2} #U (wind rotated) variable for current time
+  VWR::Array{Float64,2} #V (wind rotated) variable for current time
+  UWT2::Array{Float64,2} #U (wind) variable for nex time
+  VWT2::Array{Float64,2}#V (wind) variable for nex time
+  UWRT2::Array{Float64,2} #U (wind rotated) variable for next time
+  VWRT2::Array{Float64,2} #V (wind rotated) variable for next time
+  currDay::Int64 #Current day of the model
+  currHour::Int64 #Current hour of the model
+  lat::Array{Float64,1} #latitude vector of the currents and winds
+  lon::Array{Float64,1} #longitude vector of the currents and winds
+  depths::Array{Float64,1} #Array of depths corresponding to U and V
+  depthsMinMax::Array{Int64,1} #Array of indexes corresponding to the minumum and maximum depth of the particles
+  depthsIndx::Array{Int64,2} #Array of indexes corresponding to closest indexes at each depth of the particles
+  atmFilePrefix::String #File prefix for the atmospheric netcdf files
+  oceanFilePrefix::String #File prefix for the ocean netcdf files
+  uvar::String #The name of the variable U inside the netcdf
+  vvar::String #The name of the variable V inside the netcdf
+  ELE::Int64 #Nodes of an element
+  E2E5::Array{Int64,2} #table of the elements that surround an element at 5 levels
+  N2E::Array{Int64,2} #Table of the elements that surround a node
+  CostaX::Array{Int64,1} #Node longitud of Coastline of mesh defined by FORT.14 (Longitude)
+  CostaY::Array{Int64,1} #Node latitude of Coastline of mesh defined by FORT.14 (Latitude)
+  TR::Array{Int64,2} #Triangulation
+  MeshInterp::Array{Int64,2} #Interp object for future interpolation
 end
