@@ -1,13 +1,12 @@
-path = "/media/petroleo/Datos/"
+
 #-------- function ------
 using NetCDF
-function VectorFields(deltaT,currHour, currDay, VF, modelConfig)
+function VectorFields(deltaT,currHour, currDay, VF, modelConfig, atmFilePrefix, oceanFilePrefix)
+  path = "/media/petroleo/Datos/"
   fixedWindDeltaT = 6
   newDay = currDay + 1
   windFileNum = convert(Int64,floor(currHour/fixedWindDeltaT)+ 1)
   windFileNum2 = convert(Int64,ceil((currHour+0.1)/fixedWindDeltaT)+ 1)
-  atmFilePrefix = "Dia_" #File prefix for the atmospheric netcdf files
-  oceanFilePrefix = "archv.2010_" #File prefix for the ocean netcdf files
   readOceanFile = "$(oceanFilePrefix)$(currDay)_00_3z.nc"
   readOceanFileT2 = "$(oceanFilePrefix)$(newDay)_00_3z.nc"
   readAtmFile = "$(atmFilePrefix)$(currDay)_"
@@ -42,7 +41,6 @@ function VectorFields(deltaT,currHour, currDay, VF, modelConfig)
 
       VF.depthsMinMax = [findfirst(obj -> obj >= modelConfig.depths[1], VF.depths), findfirst(obj -> obj >= modelConfig.depths[end], VF.depths)]
 
-      #Setting the minimum index
 
       U = ncread(path*readOceanFile, "U", [1,1, VF.depthsMinMax[1]],[-1, -1, VF.depthsMinMax[2]])
       V = ncread(path*readOceanFile,"V",[1,1, VF.depthsMinMax[1]],[-1, -1, VF.depthsMinMax[2]])
