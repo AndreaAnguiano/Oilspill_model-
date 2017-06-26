@@ -29,7 +29,7 @@ function advectParticles(VF, modelConfig, Particles, currDate)
   #Iterate over the different depths
   dIndx = 1
 
-  println(VF.depthsIndx)
+
   for depth = modelConfig.depths
     #Get the index for the particles at this depth
     currPartIndex = particleDepth == depth
