@@ -1,6 +1,6 @@
 using Plots
 #----initial conditions----
-Days = 5
+Days = 10
 
 startDate = DateTime(2010,04,23)
 endDate =startDate + Dates.Day(Days)
@@ -30,8 +30,8 @@ decay = Decay(burned,collected, evaporate, biodeg, byComponent)
 lat = [28.0]
 lon = [-88.0]
 deltaT = 3
-visualize = false
-model = "adcirc"
+visualize = true
+model = "hycom"
 
 modelConfigs = modelConfig(startDate,endDate, depths, lat, lon, components, subSurfaceFraction, decay, timeStep, initPartSize, totComponents, windContrib, turbulentDiff, diffusion, model)
 
