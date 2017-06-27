@@ -76,12 +76,12 @@ function advectParticles(VF, modelConfig, Particles, currDate)
 
     #Interpolate the U and V fields for the particles positions
 
-    Uinterp = interpolate((VF.lat, VF.lon), U, Gridded(Linear()))
-    Vinterp = interpolate((VF.lat, VF.lon), V, Gridded(Linear()))
-    UN = Uinterp[latP,lonP]
-    VN = Uinterp[latP,lonP]
-    Upart = [UN[i,i] for i in range(1,length(latP))]
-    Vpart = [VN[i,i] for i in range(1, length(latP))]
+    Uinterp = interpolate((VF.lon, VF.lat), U, Gridded(Linear()))
+    Vinterp = interpolate((VF.lon, VF.lat), V, Gridded(Linear()))
+    UN = Uinterp[lonP,latP]
+    VN = Uinterp[lonP,latP]
+    Upart = [UN[i,i] for i in range(1,length(lonP))]
+    Vpart = [VN[i,i] for i in range(1, length(lonP))]
 
     #Move particles to dt/2 (Runge Kutta 2)
     k1lat = (DeltaT*Vpart)*(180/(R*pi))
@@ -96,12 +96,12 @@ function advectParticles(VF, modelConfig, Particles, currDate)
     Vhalf = V + (VT2 - V)/2
 
     #Interpolate VF.U and VF.V to New particles positions using VF.U at dt/2
-    UhalfInterp = interpolate((VF.lat, VF.lon), Uhalf, Gridded(Linear()))
-    VhalfInterp = interpolate((VF.lat, VF.lon), Vhalf, Gridded(Linear()))
-    UHN = UhalfInterp[latP, lonP]
-    VHN = VhalfInterp[latP, lonP]
-    UhalfPart = [UHN[i,i] for i in range(1,length(latP))]
-    VhalfPart = [VHN[i,i] for i in range(1,length(latP))]
+    UhalfInterp = interpolate((VF.lon, VF.lat), Uhalf, Gridded(Linear()))
+    VhalfInterp = interpolate((VF.lon, VF.lat), Vhalf, Gridded(Linear()))
+    UHN = UhalfInterp[lonP, latP]
+    VHN = VhalfInterp[lonP, latP]
+    UhalfPart = [UHN[i,i] for i in range(1,length(lonP))]
+    VhalfPart = [VHN[i,i] for i in range(1,length(lonP))]
 
     #Add turbulent-diffusion
     Uturb = UhalfPart.*(-modelConfig.turbulentDiff + (2*modelConfig.turbulentDiff).*(rand(size(UhalfPart))))
