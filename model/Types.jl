@@ -104,8 +104,8 @@ type VectorFieldsADCIRC
   uvar::String #The name of the variable U inside the netcdf
   vvar::String #The name of the variable V inside the netcdf
   ELE::Array{Int64,2} #Nodes of an element
-  E2E5::Array{Int64,2} #table of the elements that surround an element at 5 levels
-  N2E::Array{Int64,2} #Table of the elements that surround a node
+  E2E5::Array{Float64,2} #table of the elements that surround an element at 5 levels
+  N2E::Array{Float64,2} #Table of the elements that surround a node
   CostaX::Array{Float64,2} #Node longitud of Coastline of mesh defined by FORT.14 (Longitude)
   CostaY::Array{Float64,2} #Node latitude of Coastline of mesh defined by FORT.14 (Latitude)
   TR::Array{Float64,2} #Triangulation
