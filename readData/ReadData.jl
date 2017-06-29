@@ -1,5 +1,5 @@
 using DataFrames
-function readData(FileName; depth::Array{Int64,1}=[1,1000], perc::Array{Float64,1}=[1.0], barrellsPerParticle::Int64=1000)
+function readData(FileName::String; depth::Array{Int64,1}=[1,1000], perc::Array{Float64,1}=[1.0], barrellsPerParticle::Int64=1000)
   File = readtable(FileName, header = false,  separator = ';')
   ArraySpillByDay = Array{OilSpillData}(length(File[1]))
 
