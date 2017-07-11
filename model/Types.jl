@@ -1,4 +1,5 @@
 #constructor that contains all the values for the spill
+using GeometricalPredicates
 type OilSpillData
   dates::DateTime
   barrells::Array
@@ -48,6 +49,20 @@ type vectorFields
   VWT2::Array{Float64,2}#V (wind) variable for nex time
   UWRT2::Array{Float64,2}
   VWRT2::Array{Float64,2}
+  UWRT2minusUWRT::Array{Float64,2} #temporal variable that holds U(d_1) - U(d_0) Used for the interpolation
+  VWRT2minusVWRT::Array{Float64,2}
+  UD::Array{Float64,3} #This variable will alwats hold the currents of the current day
+  VD::Array{Float64,3} #This variable will alwats hold the currents of the current day
+  UDT2::Array{Float64,3} #This variable will alwats hold the currents of the next day
+  VDT2::Array{Float64,3} #This variable will alwats hold the currents of the next day
+  UDT2minusUDT::Array{Float64,3} #This variable will alwats hold the currents of the next day
+  VDT2minusVDT::Array{Float64,3} #This variable will alwats hold the currents of the next day
+  UWRD::Array{Float64,2} #This variable will always hold the winds of the previous closest timestep
+  VWRD::Array{Float64,2}#This variable will always hold the winds of the previous closest timestep
+  UWRDT2::Array{Float64,2}#This variable will always hold the winds of the next closest timestep
+  VWRDT2::Array{Float64,2}#This variable will always hold the winds of the next closest timestep
+  UWRDT2minusUWRDT::Array{Float64,2} #This variable will always has UDT2 - UD, is used to reduce computations in every iteration
+  VWRDT2minusVWRDT::Array{Float64,2}#This variable will always has VDT2 - VD, is used to reduce computations in every iteration
   currDay::Int64 #Current day of the model
   currHour::Int64 #Current hour of the model
   lat::Array{Float64,1}
@@ -55,6 +70,7 @@ type vectorFields
   depths::Array{Float64,1} #Array of depths corresponding to U and V
   depthsMinMax::Array{Int64,1} #Array of indexes corresponding to the minumum and maximum depth of the particles
   depthsIndx::Array{Int64,2} #Array of indexes corresponding to closest indexes at each depth of the particles
+  depthsRelativeIndx::Array{Int64,2} #Array of indexes corresponding to closest indexes at each depth of the particles for cutted U and V
 end
 
 type ParticlesByTimeStep
@@ -108,6 +124,6 @@ type VectorFieldsADCIRC
   N2E::Array{Float64,2} #Table of the elements that surround a node
   CostaX::Array{Float64,2} #Node longitud of Coastline of mesh defined by FORT.14 (Longitude)
   CostaY::Array{Float64,2} #Node latitude of Coastline of mesh defined by FORT.14 (Latitude)
-  TR::Array{Float64,2} #Triangulation
+  TR::Array{GeometricalPredicates.UnOrientedTriangle{Point2D},1} #Array of triangles
   MeshInterp::Array{Float64,2} #Interp object for future interpolation
 end
