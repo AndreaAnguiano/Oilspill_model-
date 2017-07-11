@@ -1,11 +1,12 @@
 
 using NetCDF
+using MAT
 function vectorFieldsADCIRC(deltaT::Int64, currHour::Int64, currDay::Int64, VF::VectorFieldsADCIRC, modelConfig::modelConfig, atmFilePrefix::String, oceanFilePrefix::String, uvar::String, vvar::String)
   path = "/media/petroleo/DatosADCIRC/"
   currentDeltaT = 1
   myEps = 0.01
   newDay = currDay + 1
-
+  fixedWindDeltaT = 1
   windFileNum = convert(Int64,floor(currHour/currentDeltaT)+ 1)
   windFileNum2 = convert(Int64,ceil((currHour + myEps)/currentDeltaT)+ 1)
 
@@ -15,8 +16,8 @@ function vectorFieldsADCIRC(deltaT::Int64, currHour::Int64, currDay::Int64, VF::
   #Create the file names
   readOceanFile = "$(oceanFilePrefix)$(currDay).nc"
   readOceanFileT2 = "$(oceanFilePrefix)$(newDay).nc"
-  readAtmFile = "$(atmFilePrefix)$(currDay)_"
-  readAtmFileT2 = "$(atmFilePrefix)$(newDay)_"
+  readAtmFile = "$(atmFilePrefix)$(currDay).nc"
+  readAtmFileT2 = "$(atmFilePrefix)$(newDay).nc"
 
 
   mDepths = copy(modelConfig.depths)
@@ -57,14 +58,14 @@ function vectorFieldsADCIRC(deltaT::Int64, currHour::Int64, currDay::Int64, VF::
       Costa = 0
       P = hcat(VF. lon, VF.lat)
       TR = triang(VF, P)
-      z = hcat(zeros(length(VF.lon)), zeros(length(VF.lat)))
+      VF.TR = TR
       VF.MeshInterp = hcat(VF.lon, VF.lat)
       #VF.MeshInterp = interpTRI1init(VF.lon, VF.lat, z)
 
-      U = ncread(path*readOceanFile,uvar , [1,1],[-1, 1])
+      U = ncread(path*readOceanFile,uvar, [1,1],[-1, 1])
       V = ncread(path*readOceanFile,vvar,[1,1],[-1, 1])
-      UT2 = ncread(path*readOceanFileT2,uvar,[1,1],[-1, 1])
-      VT2 = ncread(path*readOceanFileT2,vvar,[1,1],[-1, 1])
+      UT2 = ncread(path*readOceanFileT2,uvar,[1, oceanFileNum2],[-1, 1])
+      VT2 = ncread(path*readOceanFileT2,vvar,[1, oceanFileNum2],[-1, 1])
       VF.U = U
       VF.V = V
       VF.UT2 = UT2
@@ -74,24 +75,22 @@ function vectorFieldsADCIRC(deltaT::Int64, currHour::Int64, currDay::Int64, VF::
     else   #read new data
       VF.U = VF.UT2
       VF.V = VF.VT2
-      UT2 = ncread(path*readOceanFileT2, uvar, [1, 1],[-1, -1])
-      VT2 = ncread(path*readOceanFileT2, vvar, [1, 1], [-1, 1])
+      UT2 = ncread(path*readOceanFileT2, uvar, [1, oceanFileNum2],[-1, 1])
+      VT2 = ncread(path*readOceanFileT2, vvar, [1, oceanFileNum2], [-1, 1])
       VF.UT2 = UT2
       VF.VT2 = VT2
     end
 
     #---------------------------------- winds ---------------------------------------------
     if currHour == 0 && VF.currDay == currDay #First time on iteration
-      UW = ncread(path*readAtmFile*"$windFileNum.nc", "windx")
-      VW = ncread(path*readAtmFile*"$windFileNum.nc", "windy")
-      UWT2 = ncread(path*readAtmFile*"$windFileNum2.nc","windx")
-      VWT2 = ncread(path*readAtmFile*"$windFileNum2.nc", "windy")
-      UWR, VWR = rotangle(UW' , VW')
-      UWR = flipdim(UWR, 2)
-      VWR = flipdim(UWR, 2)
-      UWRT2, VWRT2 = rotangle(UWT2', VWT2')
-      UWRT2 = flipdim(UWRT2, 2)
-      VWRT2 = flipdim(VWRT2, 2)
+
+      UW = ncread(path*readAtmFile, "windx",[1, 1],[-1, 1])
+      VW = ncread(path*readAtmFile, "windy",[1, 1],[-1, 1])
+      UWT2 = ncread(path*readAtmFile,"windx",[1, windFileNum2],[-1, 1])
+      VWT2 = ncread(path*readAtmFile, "windy",[1, windFileNum2],[-1, 1])
+      UWR, VWR = rotangle(UW , VW)
+      UWRT2, VWRT2 = rotangle(UWT2, VWT2)
+
       VF.UW = UW
       VF.VW = VW
       VF.UWR = UWR
@@ -108,11 +107,10 @@ function vectorFieldsADCIRC(deltaT::Int64, currHour::Int64, currDay::Int64, VF::
           VF.VW = VF.VWT2
           VF.UWR = VF.UWRT2
           VF.VWR = VF.VWRT2
-          UWT2 = ncread(path*readAtmFileT2*"1.nc","windx")
-          VWT2 = ncread(path*readAtmFileT2*"1.nc", "windy")
-          UWRT2, VWRT2 = rotangle(UWT2',VWT2')
-          UWRT2 = flipdim(UWRT2, 2)
-          VWRT2 = flipdim(VWRT2, 2)
+          UWT2 = ncread(path*readAtmFileT2,"windx",[1, windFileNum2],[-1, 1])
+          VWT2 = ncread(path*readAtmFileT2, "windy",[1, windFileNum2],[-1, 1])
+          UWRT2, VWRT2 = rotangle(UWT2,VWT2)
+
           VF.UWT2 = UWT2
           VF.VWT2 = VWT2
           VF.UWRT2 = UWRT2
@@ -123,11 +121,9 @@ function vectorFieldsADCIRC(deltaT::Int64, currHour::Int64, currDay::Int64, VF::
           VF.VW = VF.VWT2
           VF.UWR = VF.UWRT2
           VF.VWR = VF.VWRT2
-          UWT2 = ncread(path*readAtmFile*"$windFileNum2.nc","windx")
-          VWT2 = ncread(path*readAtmFile*"$windFileNum2.nc", "windy")
-          UWRT2, VWRT2 = rotangle(UWT2',VWT2')
-          UWRT2 = flipdim(UWRT2, 2)
-          VWRT2 = flipdim(VWRT2, 2)
+          UWT2 = ncread(path*readAtmFile,"windx",[1, windFileNum2],[-1, 1])
+          VWT2 = ncread(path*readAtmFile, "windy",[1, windFileNum2],[-1, 1])
+          UWRT2, VWRT2 = rotangle(UWT2,VWT2)
           VF.UWT2 = UWT2
           VF.VWT2 = VWT2
           VF.UWRT2 = UWRT2
@@ -137,7 +133,10 @@ function vectorFieldsADCIRC(deltaT::Int64, currHour::Int64, currDay::Int64, VF::
     end
     VF.currDay = currDay
     VF.currHour = currHour
-    
+    file = matopen(path*"el2el5.mat")
+    VF.E2E5 = read(file, "el2el5")
+    VF.N2E = readdlm(path*"NODE2EL.TBL")
+
 
     return VF
   end
