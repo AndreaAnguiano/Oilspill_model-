@@ -38,7 +38,6 @@ function VectorFields(deltaT,currHour, currDay, VF, modelConfig, atmFilePrefix, 
         idx = idx + 1
       end
 
-
       VF.depthsMinMax = [findfirst(obj -> obj >= modelConfig.depths[1], VF.depths), findfirst(obj -> obj >= modelConfig.depths[end], VF.depths)]
 
 
