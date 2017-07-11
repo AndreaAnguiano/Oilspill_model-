@@ -1,7 +1,11 @@
-function oilSpillModel(modelConfigs, FileName, ArrVF3, ArrVF2, ArrVF1, startJulianDate, endJulianDate, visualize, deltaT)
+using Plots
+pyplot()
+function oilSpillModel(modelConfigs, FileName, ArrVF3, ArrVF2, ArrVF1,ArrIntVF2,ArrIntVF1, ArrTR, startJulianDate, endJulianDate, visualize, deltaT, lat, lon)
   #Start of all fields with the initial conditions
   spillData = readData(FileName) #Reading all the values of the spill
-  VF = vectorFields(ArrVF3,ArrVF3,ArrVF3,ArrVF3,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,startJulianDate,0,lat,lon, ArrVF1, ArrVF1, ArrVF2) #Initial vectorfield
+  VF = vectorFields(ArrVF3,ArrVF3,ArrVF3,ArrVF3,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF3,ArrVF3,ArrVF3,ArrVF3,ArrVF3,ArrVF3,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2, startJulianDate,0, lat, lon, ArrVF1,ArrVF1,ArrVF2,ArrVF2) #Initial vectorfield
+  VFADCIRC = VectorFieldsADCIRC(ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,startJulianDate,0,lat,lon, ArrVF1, ArrVF1, ArrVF2, "atmFilePrefix", "oceanFilePrefix", "uvar", "vvar", ArrIntVF2,ArrIntVF2,ArrIntVF2, ArrVF2, ArrVF2,ArrTR,ArrVF2 )
+
   particlesByTimeStep = ParticlesByTimeStep(0.0,[0.0], 0.0, 0.0, 0.0) #Initial particlesByTimeStep
   particles = Particle[]  #Start array of particles empty
   advectingParticles = false
@@ -23,22 +27,25 @@ function oilSpillModel(modelConfigs, FileName, ArrVF3, ArrVF2, ArrVF1, startJuli
             atmFilePrefix = "Dia_" #File prefix for the atmospheric netcdf files
             oceanFilePrefix = "archv.2010_" #File prefix for the ocean netcdf files
 
-            vF = VectorFields(deltaT,currHour,currDay, VF, modelConfigs, atmFilePrefix, oceanFilePrefix)
-
-            println("CurrHour = ", currHour, " CurrDay = ", currDay )
+            vF = VectorFields2(deltaT,currHour,currDay, VF, modelConfigs, atmFilePrefix, oceanFilePrefix)
+            println("CurrHour = ", currHour, " CurrDay = ", currDay)
             #Advecting particles
 
-            Particles = advectParticles(VF, modelConfigs, particles, currDate)
+            Particles = advectParticles2(VF, modelConfigs, particles, currDate)
             #DegradingParticles
             Particles  = oilDegradation(particles, modelConfigs, spillData, particlesByTimeStep)
 
           elseif modelConfigs.model == "adcirc"
-            atmFilePrefix  = "fort.74." # File prefix for the atmospheric netcdf files
-            oceanFilePrefix  = "fort.64." # File prefix for the ocean netcdf files
+
+            atmFilePrefixADCIRC  = "fort.74." # File prefix for the atmospheric netcdf files
+            oceanFilePrefixADCIRC  = "fort.64." # File prefix for the ocean netcdf files
             uvar = "u-vel"
             vvar = "v-vel"
-            vF = VectorFieldsADCIRC(deltaT,currHour,currDay,VF, modelConfigs, atmFilePrefix, oceanFilePrefix, uvar, vvar)
+            vF = vectorFieldsADCIRC(deltaT,currHour,currDay,VFADCIRC, modelConfigs, atmFilePrefixADCIRC, oceanFilePrefixADCIRC, uvar, vvar)
             println("CurrHour = ", currHour, " CurrDay = ", currDay )
+            Particles = advectParticlesADCIRC(VFADCIRC, modelConfigs, particles, currDate)
+
+
           end
         end
         if visualize
@@ -48,10 +55,9 @@ function oilSpillModel(modelConfigs, FileName, ArrVF3, ArrVF2, ArrVF1, startJuli
           lastLat = [particles[ind].lat[end] for ind in LiveParticlesIndx]
           lastLon = [particles[ind].lon[end] for ind in LiveParticlesIndx]
           lastDepth = [particles[ind].depths[end] for ind in LiveParticlesIndx]
-
-
-          Plots.scatter3d(lastLon, lastLat, lastDepth)
+          plotParticles(lastLon, lastLat, lastDepth)
           gui()
+
         end
       end
   end
