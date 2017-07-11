@@ -1,5 +1,5 @@
 using Interpolations
-function advectParticlesADCIRC(VF, modelConfig, Particles, currDate, TR)
+function advectParticlesADCIRC(VF::VectorFieldsADCIRC, modelConfig::modelConfig, Particles::Array{Particle,1}, currDate::DateTime)
 
   DeltaT = modelConfig.timeStep*3600 #Move DT to seconds
   R = 6371e+03
@@ -70,7 +70,8 @@ function advectParticlesADCIRC(VF, modelConfig, Particles, currDate, TR)
     end
     ady = CreateAdy(VF.ELE)
     for p in Particles
-
+      triangles = findTriangle(p, VF.TR)
+      Upart = interp(triangles, p, VF, U)
 
     end
     #Interpolate the U and V fields for the particles positions
@@ -107,26 +108,27 @@ function advectParticlesADCIRC(VF, modelConfig, Particles, currDate, TR)
     # UhalfPart = UhalfPart + Uturb
     # VhalfPart = VhalfPart + Vturb
 
-    #Move particles to dt
-    newLatP = latP + (DeltaT*VhalfPart)*(180/(R*pi))
-    newLonP = lonP + ((DeltaT*UhalfPart)*(180/(R*pi))).*cosd(latP)
+
+    ##Move particles to dt
+    #newLatP = latP + (DeltaT*VhalfPart)*(180/(R*pi))
+    #newLonP = lonP + ((DeltaT*UhalfPart)*(180/(R*pi))).*cosd(latP)
 
     #println("NewLatP: ", newLatP)
     #Iterate over the particles and add the new positions
-    for idxPart = 1:length(LiveParticles)
-    # Get the current particle
-      particle = LiveParticles[idxPart]
-    #Add in one the current time step of the particle
-      particle.currTimeStep = particle.currTimeStep + 1
-      push!(particle.lat, newLatP[idxPart])
-      push!(particle.lon, newLonP[idxPart])
-      #Update the next date
-      push!(particle.dates, currDate)
-      #println("particle num:", idxPart, " ", particle.lat)
-      #Lifetime of the particle in hours
-      particle.lifeTime = particle.lifeTime + modelConfig.timeStep
-    end
-    #Increment the index for the current depth value
-    dIndx = dIndx + 1
-    end
+    # for idxPart = 1:length(LiveParticles)
+    # # Get the current particle
+    #   particle = LiveParticles[idxPart]
+    # #Add in one the current time step of the particle
+    #   particle.currTimeStep = particle.currTimeStep + 1
+    #   push!(particle.lat, newLatP[idxPart])
+    #   push!(particle.lon, newLonP[idxPart])
+    #   #Update the next date
+    #   push!(particle.dates, currDate)
+    #   #println("particle num:", idxPart, " ", particle.lat)
+    #   #Lifetime of the particle in hours
+    #   particle.lifeTime = particle.lifeTime + modelConfig.timeStep
+    # end
+    # #Increment the index for the current depth value
+    # dIndx = dIndx + 1
+     end
 end
