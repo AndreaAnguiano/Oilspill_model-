@@ -19,8 +19,7 @@ function initParticles(particles, spillData, particlesByTimeStep, modelConfig, c
   for depthIdx = 1:length(modelConfig.depths)
     for component = 1:totComp
       for numPart = 0:particlesByDepth[depthIdx, component]
-        startDate = [DateTime(Dates.year(modelConfig.startDate),12,31, currHour, 0, 0) + Dates.Day(currDay)]
-        push!(particles, Particle(startDate, copy(modelConfig.lat), copy(modelConfig.lon), [copy(modelConfig.depths[depthIdx])], 0,copy(component), 1, true, "M"))
+        push!(particles, Particle([currDay], copy(modelConfig.lat), copy(modelConfig.lon), [copy(modelConfig.depths[depthIdx])], 0,copy(component), 1, true, "M"))
         idxPart += 1
       end
     end
