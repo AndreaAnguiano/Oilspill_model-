@@ -1,6 +1,6 @@
 
 function SplitByTimeStep(ParticlesByTimeStep, spillData, modelConfigs, Day)
-  currDateIdx = find(obj -> toJulianDate(obj.dates) == Day, spillData)
+  currDateIdx = find(obj -> obj.dates == Day, spillData)
   fractByTimeStep = modelConfigs.timeStep/24
   barrellsPerParticle = spillData[currDateIdx][1].barrellsPerParticle
 
