@@ -3,6 +3,7 @@ function VectorFields2(deltaT,currHour, currDay, VF, modelConfig, atmFilePrefix,
   path = "/media/petroleo/Datos/"
   windDeltaT = 6
   myEps = .01
+  currDay = toJulianDate(currDay)
   newDay = currDay + 1
   #---------------------- read UV -------------------------------
 
@@ -52,6 +53,7 @@ function VectorFields2(deltaT,currHour, currDay, VF, modelConfig, atmFilePrefix,
       idx = idx + 1
     end
     #Used to read the files min and max depth values
+
     VF.depthsMinMax = [findfirst(obj -> obj >= modelConfig.depths[1], VF.depths), findfirst(obj -> obj >= modelConfig.depths[end], VF.depths)]
 
   else
@@ -134,6 +136,7 @@ function VectorFields2(deltaT,currHour, currDay, VF, modelConfig, atmFilePrefix,
 
   #------------------ reading and organizing the currents------------------------------
   if readOceanT2
+    println(VF.depthsMinMax)
     T1 = ncread(path*readOceanFileT2, "U",[1, 1, VF.depthsMinMax[1]], [-1,-1, VF.depthsMinMax[2]])
     T2 = ncread(path*readOceanFileT2, "V", [1, 1, VF.depthsMinMax[1]], [-1,-1, VF.depthsMinMax[2]])
     #Cut U and V to the only depth levels that we are going to use
