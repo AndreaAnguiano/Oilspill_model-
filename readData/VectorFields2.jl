@@ -136,7 +136,7 @@ function VectorFields2(deltaT,currHour, currDay, VF, modelConfig, atmFilePrefix,
 
   #------------------ reading and organizing the currents------------------------------
   if readOceanT2
-    println(VF.depthsMinMax)
+
     T1 = ncread(path*readOceanFileT2, "U",[1, 1, VF.depthsMinMax[1]], [-1,-1, VF.depthsMinMax[2]])
     T2 = ncread(path*readOceanFileT2, "V", [1, 1, VF.depthsMinMax[1]], [-1,-1, VF.depthsMinMax[2]])
     #Cut U and V to the only depth levels that we are going to use
