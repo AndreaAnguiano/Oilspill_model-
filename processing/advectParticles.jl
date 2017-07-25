@@ -44,7 +44,6 @@ function advectParticles(VF, modelConfig, Particles, currDate)
 
         UT2 = VF.UT2[:,:,currDepthIndx[1]]'
         VT2 = VF.VT2[:,:,currDepthIndx[1]]'
-        #println(VF.U)
 
         # Incorporate the force of the wind (using the rotated winds)
 
@@ -76,10 +75,10 @@ function advectParticles(VF, modelConfig, Particles, currDate)
 
     #Interpolate the U and V fields for the particles positions
 
-    Uinterp = interpolate((VF.lon, VF.lat), U, Gridded(Linear()))
-    Vinterp = interpolate((VF.lon, VF.lat), V, Gridded(Linear()))
-    UN = Uinterp[lonP,latP]
-    VN = Uinterp[lonP,latP]
+    Uinterp = interpolate((VF.lat, VF.lon), U, Gridded(Linear()))
+    Vinterp = interpolate((VF.lat, VF.lon), V, Gridded(Linear()))
+    UN = Uinterp[latP,lonP]
+    VN = Uinterp[latP,lonP]
     Upart = [UN[i,i] for i in range(1,length(lonP))]
     Vpart = [VN[i,i] for i in range(1, length(lonP))]
 
@@ -89,17 +88,17 @@ function advectParticles(VF, modelConfig, Particles, currDate)
 
     #Make half the jump
     tempK2lat = latP + k1lat/2
-    tempK2Lon = lonP + k1lon/2
+    tempK2lon = lonP + k1lon/2
 
     #Interpolate VF.U and VF.V to DeltaT/2
     Uhalf = U + (UT2 - U)/2
     Vhalf = V + (VT2 - V)/2
 
     #Interpolate VF.U and VF.V to New particles positions using VF.U at dt/2
-    UhalfInterp = interpolate((VF.lon, VF.lat), Uhalf, Gridded(Linear()))
-    VhalfInterp = interpolate((VF.lon, VF.lat), Vhalf, Gridded(Linear()))
-    UHN = UhalfInterp[lonP, latP]
-    VHN = VhalfInterp[lonP, latP]
+    UhalfInterp = interpolate((VF.lat, VF.lon), Uhalf, Gridded(Linear()))
+    VhalfInterp = interpolate((VF.lat, VF.lon), Vhalf, Gridded(Linear()))
+    UHN = UhalfInterp[tempK2lat, tempK2lon]
+    VHN = VhalfInterp[tempK2lat, tempK2lon]
     UhalfPart = [UHN[i,i] for i in range(1,length(lonP))]
     VhalfPart = [VHN[i,i] for i in range(1,length(lonP))]
 
