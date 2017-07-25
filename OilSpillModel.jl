@@ -1,4 +1,5 @@
 
+
 function oilSpillModel(modelConfigs, FileName, ArrVF3, ArrVF2, ArrVF1,ArrIntVF2,ArrIntVF1, ArrTR, startDate, endDate, visualize, deltaT, lat, lon)
   #Start of all fields with the initial conditions
   spillData = OilSpillData(FileName) #Reading all the values of the spill
@@ -17,21 +18,20 @@ function oilSpillModel(modelConfigs, FileName, ArrVF3, ArrVF2, ArrVF1,ArrIntVF2,
       splitByTimeStep = SplitByTimeStep(particlesByTimeStep, spillData, modelConfigs, currDay)
 
     end
-      for currHour in Base.range(0,deltaT,convert(Int64,24/deltaT))
+      for currHour in range(0,deltaT,convert(Int64,24/deltaT))
         if advectingParticles
           Particles = initParticles(particles, spillData, particlesByTimeStep, modelConfigs, currDay, currHour)
           if modelConfigs.model == "hycom"
             atmFilePrefix = "Dia_" #File prefix for the atmospheric netcdf files
             oceanFilePrefix = "archv.2010_" #File prefix for the ocean netcdf files
 
-            vF = VectorFields2(deltaT,currHour,currDay, VF, modelConfigs, atmFilePrefix, oceanFilePrefix)
+            vF = VectorFields(deltaT,currHour,currDay, VF, modelConfigs, atmFilePrefix, oceanFilePrefix)
             println("CurrHour = ", currHour, " CurrDay = ", currDay)
             #Advecting particles
 
-            Particles = advectParticles2(VF, modelConfigs, particles, currDay)
+            Particles = advectParticles(VF, modelConfigs, particles, currDay)
             #DegradingParticles
             Particles  = oilDegradation(particles, modelConfigs, spillData, particlesByTimeStep)
-            println(particles)
 
           elseif modelConfigs.model == "adcirc"
             atmFilePrefixADCIRC  = "fort.74." # File prefix for the atmospheric netcdf files
@@ -58,4 +58,5 @@ function oilSpillModel(modelConfigs, FileName, ArrVF3, ArrVF2, ArrVF1,ArrIntVF2,
         end
       end
   end
+  return particles
 end
