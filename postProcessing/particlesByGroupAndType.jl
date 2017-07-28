@@ -1,9 +1,8 @@
 using Plots
-pyplot()
+plotly()
 #grupo en el caso del petroleo son evaporadas, quemadas, etc. Y tipo, son los componentes del petroleo.
 
 function particlesByGroup(particles::Array{Particle,1})
-
   allGroups = Array{String}(length(particles))
   allTypes = Array{Int64}(length(particles))
 
@@ -12,20 +11,29 @@ function particlesByGroup(particles::Array{Particle,1})
     allTypes[particle] = particles[particle].component
   end
   Groups = unique(allGroups)
-  totGroups = Array{Array{Int64}}(length(Groups))
   Types = unique(allTypes)
 
+  GroupsAll =[length(find(x -> x == Groups[group],allGroups)) for group in 1:length(Groups)]
+  GroupsAndTypes = zeros(Int64, length(Groups), length(Types))
+
   for group in 1:length(Groups)
-    totGroups[group] = find(x -> x == Groups[group], allGroups)
+    indxStatus = find(x-> x.status == Groups[group], particles)
+    subPart = particles[indxStatus]
+      for typ in 1:length(Types)
+        indxComp = find(x-> x.component == Types[typ], particles)
+        GroupsAndTypes[group,typ] = length(indxComp)
+      end
   end
 
-  totGroupsAndTypes = Array{Array{Int64}}(length(Groups))
-  for group in totGroups
-    tempType = Array{Array{Int64}}(length(group))
-    for typ in Types
-      tempType[typ] = find(x -> x == Types[typ], group)
-    end
-    totGroupsAndTypes[group,:] = tempType
+  newGroupsAndTypes = Array{Int64,1}[]
+  for group in 1:length(GroupsAndTypes[:,1])
+    push!(newGroupsAndTypes, GroupsAndTypes[group,:])
   end
+
+
+  println(Groups)
+  trace1 = ["x" => Groups, "y" => newGroupsAndTypes, "name" => "Types", "type" => "bar"]
+  data = trace1
+  plot(data)
 
 end
