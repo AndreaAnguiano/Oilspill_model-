@@ -4,6 +4,7 @@ using NetCDF
 function VectorFields(deltaT,currHour, currDay, VF, modelConfig, atmFilePrefix, oceanFilePrefix)
   path = "/media/petroleo/Datos/"
   fixedWindDeltaT = 6
+  currDay = toJulianDate(currDay)
   newDay = currDay + 1
   windFileNum = convert(Int64,floor(currHour/fixedWindDeltaT)+ 1)
   windFileNum2 = convert(Int64,ceil((currHour+0.1)/fixedWindDeltaT)+ 1)
