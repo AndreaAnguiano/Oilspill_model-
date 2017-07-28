@@ -25,11 +25,11 @@ function oilSpillModel(modelConfigs, FileName, ArrVF3, ArrVF2, ArrVF1,ArrIntVF2,
             atmFilePrefix = "Dia_" #File prefix for the atmospheric netcdf files
             oceanFilePrefix = "archv.2010_" #File prefix for the ocean netcdf files
 
-            vF = VectorFields(deltaT,currHour,currDay, VF, modelConfigs, atmFilePrefix, oceanFilePrefix)
+            vF = VectorFields2(deltaT,currHour,currDay, VF, modelConfigs, atmFilePrefix, oceanFilePrefix)
             println("CurrHour = ", currHour, " CurrDay = ", currDay)
             #Advecting particles
 
-            Particles = advectParticles(VF, modelConfigs, particles, currDay)
+            Particles = advectParticles2(VF, modelConfigs, particles, currDay)
             #DegradingParticles
             Particles  = oilDegradation(particles, modelConfigs, spillData, particlesByTimeStep)
 
