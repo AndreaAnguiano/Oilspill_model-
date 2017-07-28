@@ -85,7 +85,7 @@ function advectParticles2(VF, modelConfig, Particles, currDate)
 
     #Move particles to dt/2 (Runge Kutta 2)
     k1lat = (DeltaT*Vpart)*(180/(R*pi))
-    k1lon = ((DeltaT*Upart)*(180/(R*pi))).*cosd(latP)
+    k1lon = ((DeltaT*Upart)*(180/(R*pi))).*cosd.(latP)
 
     #Make half the jump
     tempK2lat = latP + k1lat/2
@@ -111,7 +111,7 @@ function advectParticles2(VF, modelConfig, Particles, currDate)
 
     #Move particles to dt
     newLatP = latP + (DeltaT*VhalfPart)*(180/(R*pi))
-    newLonP = lonP + ((DeltaT*UhalfPart)*(180/(R*pi))).*cosd(latP)
+    newLonP = lonP + ((DeltaT*UhalfPart)*(180/(R*pi))).*cosd.(latP)
 
     #println("NewLatP: ", newLatP)
     #Iterate over the particles and add the new positions
