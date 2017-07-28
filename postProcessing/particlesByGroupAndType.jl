@@ -30,10 +30,4 @@ function particlesByGroup(particles::Array{Particle,1})
     push!(newGroupsAndTypes, GroupsAndTypes[group,:])
   end
 
-
-  println(Groups)
-  trace1 = ["x" => Groups, "y" => newGroupsAndTypes, "name" => "Types", "type" => "bar"]
-  data = trace1
-  plot(data)
-
 end
