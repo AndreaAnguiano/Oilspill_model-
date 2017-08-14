@@ -25,12 +25,9 @@ function particlesByGroup(particles::Array{Particle,1})
         GroupsAndTypes[group,typ] = length(indxComp)
       end
   end
-
-  println(GroupsAndTypes)
-  groupedbar(Groups, GroupsAndTypes, legend= true, color_palette= :PuBu, xlabel= "Status", ylabel = "Particles", title = "Particles by status and oil type", ylims= maximum(GroupsAndTypes)+10)
-  #savefig("ParticlesByGroupAndOilType")
-
-  bar(["type 1", "type 2", "type 3", "type 4", "type 5", "type 6", "type 7", "type8"], TypesAll, xlabel = "Type of oil", ylabel = "Particles", title= "Particles by oil type", ylims= maximum(TypesAll)+200, legend=false)
+  typesString = ["Type 1", "Type 2", "Type 3", "Type 4", "Type 5", "Type 6", "Type 7", "Type 8"]
+  plotByType(typesString, TypesAll)
   #savefig("ParticlesByOilType")
+  plotByGroupAndType(Groups, GroupsAndTypes)
   gui()
 end
