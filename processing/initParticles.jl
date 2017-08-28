@@ -10,8 +10,8 @@ function initParticles(particles, spillData, particlesByTimeStep, modelConfig, c
     if depth == 0
       particlesByDepth[idxDepth,:] = ceil.(modelConfig.components[idxDepth,:].*particlesByTimeStep.particles)
     else
-
        particlesByDepth[idxDepth,:] = ceil.(modelConfig.components[idxDepth,:].*particlesByTimeStep.partSub[idxDepth-1])
+       #println(particlesByDepth[idxDepth,:])
      end
     idxDepth = idxDepth + 1
    end
