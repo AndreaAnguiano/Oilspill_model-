@@ -1,10 +1,21 @@
 using Plots
+using MAT
 plotlyjs()
-function plotParticles(x,y,z)
-  scatter3d(x,y,z, xlims = maximum(x), ylims = maximum(y), zlims = maximum(z))
+path = "/media/petroleo/Datos/"
+
+function plotParticles2D(x::Array{Float64,1},y::Array{Float64,1})
+  plot!(x,y, seriestype=:scatter, markersize = 0.7)
   gui()
 end
-
+function plotParticles3D(x,y)
+  scatter(x,y,z)
+end
+function plotGulf()
+  Data  = matread(path*"linea_costa_divpol.mat")
+  gulf = Data["linea_costa"]
+  plot(gulf[:,1], gulf[:,2], linecolor = :black, linewidth = 1, ylims=(18, 31), xlims=(-98, -80), aspect_ratio=:equal)
+  gui()
+end
 function plotByGroup(Groups::Array{String,1}, GroupsAll::Array{Int64,1})
   plot(Groups, GroupsAll, xlabel = "Status", ylabel = "Particles", title= "Particles by status",
   ylims= maximum(GroupsAll)+2000, legend=false,seriestype = :bar)
