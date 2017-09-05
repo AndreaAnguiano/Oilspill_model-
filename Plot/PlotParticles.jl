@@ -1,10 +1,10 @@
 using Plots
 using MAT
-plotlyjs()
+pyplot()
 path = "/media/petroleo/Datos/"
 
 function plotParticles2D(x::Array{Float64,1},y::Array{Float64,1})
-  plot!(x,y, seriestype=:scatter, markersize = 0.7)
+  plot!(x,y, seriestype=:scatter, markersize = 1, legend = false, color= :blues)
   gui()
 end
 function plotParticles3D(x,y)
