@@ -80,14 +80,21 @@ function VectorFields2(deltaT,currHour, currDay, VF, modelConfig, atmFilePrefix,
   end
 
   #----------------- reading data -------------------------
+
+  rangetest = range(VF.depthsMinMax[1], VF.depthsMinMax[2]-VF.depthsMinMax[1]+1)
+  cutIndx = zeros(Int64,length(unique(VF.depthsIndx)))
+  for indx in range(1,length(unique(VF.depthsIndx)))
+    cutIndx[indx] = find(x-> x == VF.depthsIndx[indx], rangetest)[1]
+  end
+
   #verify if we need to read the winds and currents for the current day
   if firstRead
     #reading currents for current day
-    T1 = ncread(path*readOceanFile, "U", [1, 1, VF.depthsMinMax[1]], [-1,-1, VF.depthsMinMax[2]])
-    T2 = ncread(path*readOceanFile, "V", [1, 1, VF.depthsMinMax[1]], [-1,-1, VF.depthsMinMax[2]])
+    T1 = ncread(path*readOceanFile, "U", [1, 1, VF.depthsMinMax[1]], [-1,-1,VF.depthsMinMax[2]-VF.depthsMinMax[1]+1])
+    T2 = ncread(path*readOceanFile, "V", [1, 1, VF.depthsMinMax[1]], [-1,-1, VF.depthsMinMax[2]-VF.depthsMinMax[1]+1])
     #Cut U and V to the only depth levels that we are going to use
-    VF.UD = flipdim(rotr903D(T1[:,:,unique(VF.depthsIndx)],1),3)
-    VF.VD = flipdim(rotr903D(T2[:,:,unique(VF.depthsIndx)],1),3)
+    VF.UD = flipdim(rotr903D(T1[:,:,cutIndx],1),3)
+    VF.VD = flipdim(rotr903D(T2[:,:,cutIndx],1),3)
     #reading winds for current day
 
     TempUW = ncread(path*readWindFile, "U_Viento")
@@ -136,12 +143,12 @@ function VectorFields2(deltaT,currHour, currDay, VF, modelConfig, atmFilePrefix,
 
   #------------------ reading and organizing the currents------------------------------
   if readOceanT2
-
-    T1 = ncread(path*readOceanFileT2, "U",[1, 1, VF.depthsMinMax[1]], [-1,-1, VF.depthsMinMax[2]])
-    T2 = ncread(path*readOceanFileT2, "V", [1, 1, VF.depthsMinMax[1]], [-1,-1, VF.depthsMinMax[2]])
+    T1 = ncread(path*readOceanFileT2, "U",[1, 1, VF.depthsMinMax[1]], [-1,-1,VF.depthsMinMax[2]-VF.depthsMinMax[1]+1])
+    T2 = ncread(path*readOceanFileT2, "V", [1, 1, VF.depthsMinMax[1]], [-1,-1, VF.depthsMinMax[2]-VF.depthsMinMax[1]+1])
     #Cut U and V to the only depth levels that we are going to use
-    VF.UDT2 = flipdim(rotr903D(T1[:,:,unique(VF.depthsIndx)],1),3)
-    VF.VDT2 = flipdim(rotr903D(T2[:,:,unique(VF.depthsIndx)],1),3)
+
+    VF.UDT2 = flipdim(rotr903D(T1[:,:,cutIndx],1),3)
+    VF.VDT2 = flipdim(rotr903D(T2[:,:,cutIndx],1),3)
   end
 
   #making the interpolation to the proper timesteps
