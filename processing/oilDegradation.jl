@@ -38,46 +38,48 @@ function oilDegradation(particles, modelConfigs, spillData, particlesByTimeStep)
        particlesIndex = deleteat!(particlesIndex, partToKill)
 
     end
-    random_particles = particlesIndex[randperm(length(particlesIndex))]
+    if any(x-> x ==0, modelConfigs.depths)
+      random_particles = particlesIndex[randperm(length(particlesIndex))]
 
-    #compute the number of particles to evaporate, burn and recover (statistically) from fractional value
-    toEvaporate = floor(particlesByTimeStep.evaporated) + ((particlesByTimeStep.evaporated - floor(particlesByTimeStep.evaporated)) .> rand(1))
-    toBurn = floor(particlesByTimeStep.burned) + ((particlesByTimeStep.burned - floor(particlesByTimeStep.burned)) .> rand(1))
-    toRecover = floor(particlesByTimeStep.recovered) + ((particlesByTimeStep.recovered - floor(particlesByTimeStep.recovered)) .> rand(1))
+      #compute the number of particles to evaporate, burn and recover (statistically) from fractional value
+      toEvaporate = floor(particlesByTimeStep.evaporated) + ((particlesByTimeStep.evaporated - floor(particlesByTimeStep.evaporated)) .> rand(1))
+      toBurn = floor(particlesByTimeStep.burned) + ((particlesByTimeStep.burned - floor(particlesByTimeStep.burned)) .> rand(1))
+      toRecover = floor(particlesByTimeStep.recovered) + ((particlesByTimeStep.recovered - floor(particlesByTimeStep.recovered)) .> rand(1))
 
-    for partIndx = random_particles
-      component_p = particles[LiveParticles[partIndx]].component
-      #Evaporated
-      if modelConfigs.decay.evaporate == [1] && parts_evaporated < toEvaporate[1] && component_p in 1:4
-        particles[LiveParticles[partIndx]].isAlive = 0
-        particles[LiveParticles[partIndx]].status = "E"
-        parts_evaporated = parts_evaporated + 1
-      #Burned
-      elseif modelConfigs.decay.burned == [1] && parts_burned <  toBurn[1]
-        #Calculate the distance from source
-        ind = particles[LiveParticles[partIndx]].currTimeStep
-        lat_p = particles[LiveParticles[partIndx]].lat[ind]
-        lon_p = particles[LiveParticles[partIndx]].lon[ind]
-        #Haversine formula
-        delta_lat = deg2rad.(lat_p - modelConfigs.lat)
-        delta_lon = deg2rad.(lon_p - modelConfigs.lon)
-        a = sin(delta_lat[1]/2)^2 + cos(deg2rad(lat_p))*cos(deg2rad.(modelConfigs.lat[1]))*sin(delta_lon[1]/2)^2
-        c = 2*atan(sqrt(a))*atan(sqrt(1-a))
-        distanceFromSource = 6371e+03/1000 * c
-        if distanceFromSource <= burning_radius
+      for partIndx = random_particles
+        component_p = particles[LiveParticles[partIndx]].component
+        #Evaporated
+        if modelConfigs.decay.evaporate == [1] && parts_evaporated < toEvaporate[1] && component_p in 1:4
           particles[LiveParticles[partIndx]].isAlive = 0
-          particles[LiveParticles[partIndx]].status = "B"
-          parts_burned = parts_burned + 1
-        end
-      #Collected
-      elseif modelConfigs.decay.collected == [1] && parts_collected < toRecover[1]
-        particles[LiveParticles[partIndx]].isAlive = 0
-        particles[LiveParticles[partIndx]].status = "C"
-        parts_collected = parts_collected + 1
+          particles[LiveParticles[partIndx]].status = "E"
+          parts_evaporated = parts_evaporated + 1
+        #Burned
+        elseif modelConfigs.decay.burned == [1] && parts_burned <  toBurn[1]
+          #Calculate the distance from source
+          ind = particles[LiveParticles[partIndx]].currTimeStep
+          lat_p = particles[LiveParticles[partIndx]].lat[ind]
+          lon_p = particles[LiveParticles[partIndx]].lon[ind]
+          #Haversine formula
+          delta_lat = deg2rad.(lat_p - modelConfigs.lat)
+          delta_lon = deg2rad.(lon_p - modelConfigs.lon)
+          a = sin(delta_lat[1]/2)^2 + cos(deg2rad(lat_p))*cos(deg2rad.(modelConfigs.lat[1]))*sin(delta_lon[1]/2)^2
+          c = 2*atan(sqrt(a))*atan(sqrt(1-a))
+          distanceFromSource = 6371e+03/1000 * c
+          if distanceFromSource <= burning_radius
+            particles[LiveParticles[partIndx]].isAlive = 0
+            particles[LiveParticles[partIndx]].status = "B"
+            parts_burned = parts_burned + 1
+          end
+        #Collected
+        elseif modelConfigs.decay.collected == [1] && parts_collected < toRecover[1]
+          particles[LiveParticles[partIndx]].isAlive = 0
+          particles[LiveParticles[partIndx]].status = "C"
+          parts_collected = parts_collected + 1
 
-      else
-        #If we get here, then we do not need to degrade any more particles
-        break
+        else
+          #If we get here, then we do not need to degrade any more particles
+          break
+        end
       end
     end
   end
