@@ -5,16 +5,23 @@ function initParticles(particles, spillData, particlesByTimeStep, modelConfig, c
 
   idxDepth = 1 #Auxiliar index of the current depth
   particlesByDepth = zeros(size(modelConfig.components))
-  for depth = modelConfig.depths
+  #println(size(particlesByDepth), particlesByTimeStep.partSub)
 
-    if depth == 0
-      particlesByDepth[idxDepth,:] = ceil.(modelConfig.components[idxDepth,:].*particlesByTimeStep.particles)
-    else
-       particlesByDepth[idxDepth,:] = ceil.(modelConfig.components[idxDepth,:].*particlesByTimeStep.partSub[idxDepth-1])
-       #println(particlesByDepth[idxDepth,:])
+  if any(x-> x ==0, modelConfig.depths)
+    for depth = modelConfig.depths
+      if depth == 0
+        particlesByDepth[idxDepth,:] = ceil.(modelConfig.components[idxDepth,:].*particlesByTimeStep.particles)
+      else
+        particlesByDepth[idxDepth,:] = ceil.(modelConfig.components[idxDepth,:].*particlesByTimeStep.partSub[idxDepth-1])
+      end
+      idxDepth = idxDepth + 1
+    end
+  else
+    for depth = modelConfig.depths
+      particlesByDepth[idxDepth,:] = ceil.(modelConfig.components[idxDepth,:].*particlesByTimeStep.partSub[idxDepth])
+      idxDepth = idxDepth + 1
      end
-    idxDepth = idxDepth + 1
-   end
+  end
 # #
   for depthIdx = 1:length(modelConfig.depths)
     for component = 1:totComp
