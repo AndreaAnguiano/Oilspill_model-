@@ -1,10 +1,11 @@
 
 using NetCDF
 using MAT
-function vectorFieldsADCIRC(deltaT::Int64, currHour::Int64, currDay::Int64, VF::VectorFieldsADCIRC, modelConfig::modelConfig, atmFilePrefix::String, oceanFilePrefix::String, uvar::String, vvar::String)
+function vectorFieldsADCIRC(deltaT::Int64, currHour::Int64, currDay::DateTime, VF::VectorFieldsADCIRC, modelConfig::modelConfig, atmFilePrefix::String, oceanFilePrefix::String, uvar::String, vvar::String)
   path = "/media/petroleo/DatosADCIRC/"
   currentDeltaT = 1
   myEps = 0.01
+  currDay = toJulianDate(currDay)
   newDay = currDay + 1
   fixedWindDeltaT = 1
   windFileNum = convert(Int64,floor(currHour/currentDeltaT)+ 1)
