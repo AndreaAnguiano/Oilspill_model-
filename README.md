@@ -2,7 +2,7 @@
 
 ## Introduction
 
-> In this github an oil spill particle dispersion model implemented in Julia, is described. 
+> In this repository an oil spill particle dispersion model implemented in Julia, is described. 
 
 > The model is based on a Lagrangian particle tracking algorithm with a second-order Runge-Kutta scheme. It uses ocean currents from the Hybrid Coordinate Ocean Model (HYCOM), and winds from the Weather Research and (WRF).
 
