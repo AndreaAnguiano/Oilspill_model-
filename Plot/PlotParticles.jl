@@ -4,16 +4,16 @@ pyplot()
 path = "/media/petroleo/Datos/"
 
 function plotParticles2D(x::Array{Float64,1},y::Array{Float64,1})
-  plot!(x,y, seriestype=:scatter, markersize = 1, legend = false, color= :blues)
+  plot!(x,y, seriestype=:scatter, markersize = 0.7 , legend = false, color= :blue, markerstrokecolor = :blue, xlabel = "Latitud", ylabel= "Longitud")
   gui()
 end
-function plotParticles3D(x,y)
-  scatter(x,y,z)
+function plotParticles3D(x::Array{Float64,1},y::Array{Float64,1},z::Array{Float64,1})
+  scatter(x,y,z, color = :blue)
 end
-function plotGulf()
+function plotGulf(lims::Array{Int64,2})
   Data  = matread(path*"linea_costa_divpol.mat")
   gulf = Data["linea_costa"]
-  plot(gulf[:,1], gulf[:,2], linecolor = :black, linewidth = 1, ylims=(18, 31), xlims=(-98, -80), aspect_ratio=:equal)
+  plot(gulf[:,1], gulf[:,2], linecolor = :black, linewidth = 1, ylims=(lims[2,1], lims[2,2]), xlims=(lims[1,1], lims[1,2]), aspect_ratio=:equal, legend = false)
   gui()
 end
 function plotByGroup(Groups::Array{String,1}, GroupsAll::Array{Int64,1})
@@ -30,8 +30,8 @@ function plotByGroupAndType(Groups::Array{String,1}, GroupsAndTypes::Array{Int64
    title = "Particles by status and oil type", label = label, ylims= maximum(GroupsAndTypes)+10, seriestype = :bar)
 end
 
-function plotByTypeAndDate(Types::Array{String,1}, TypesAndDates::Array{Int64,1} )
-  plot(Types, TypeAndDates, xlabel = "Type of oil", ylabel = "Average life", title= "Average life by oil type", legend=false, seriestype = :bar)
+function plotByTypeAndDate(Types::Array{String,1}, TypesAndDates::Array{Float64,1} )
+  plot(Types, TypesAndDates, xlabel = "Type of oil", ylabel = "Average life(days)", title= "Average life by oil type", legend=false, seriestype = :bar)
 end
 
 function plotByPosition(position::Array{String,1}, particles::Array{Float64,1})
