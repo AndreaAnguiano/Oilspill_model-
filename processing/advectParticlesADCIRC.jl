@@ -74,7 +74,9 @@ function advectParticlesADCIRC(VF::VectorFieldsADCIRC, modelConfig::modelConfig,
       Upart = interp(triangles, p, VF, U)
 
     end
+
     #Interpolate the U and V fields for the particles positions
+
     # Uinterp = interpolate((VF.lon, VF.lat), U, Gridded(Linear()))
     # Vinterp = interpolate((VF.lon, VF.lat), V, Gridded(Linear()))
     # UN = Uinterp[lonP,latP]
