@@ -9,14 +9,18 @@ function initParticles(particles, spillData, particlesByTimeStep, modelConfig, c
 
   if any(x-> x ==0, modelConfig.depths)
     for depth = modelConfig.depths
+      #println(depth)
       if depth == 0
         particlesByDepth[idxDepth,:] = ceil.(modelConfig.components[idxDepth,:].*particlesByTimeStep.particles)
       else
+        #println("particlesByDepth: ", particlesByDepth, length(particlesByDepth),"...", "modelConfig.components: ", modelConfig.components[idxDepth,:], "*particlesByTimeStep.partSub: ",particlesByTimeStep.partSub[idxDepth-1], " idxDepth: ",idxDepth, "---")
+
         particlesByDepth[idxDepth,:] = ceil.(modelConfig.components[idxDepth,:].*particlesByTimeStep.partSub[idxDepth-1])
       end
       idxDepth = idxDepth + 1
     end
   else
+    #cuando no se tiene la profundidad 0 en el modelo 
     for depth = modelConfig.depths
       particlesByDepth[idxDepth,:] = ceil.(modelConfig.components[idxDepth,:].*particlesByTimeStep.partSub[idxDepth])
       idxDepth = idxDepth + 1
@@ -26,7 +30,7 @@ function initParticles(particles, spillData, particlesByTimeStep, modelConfig, c
   for depthIdx = 1:length(modelConfig.depths)
     for component = 1:totComp
       for numPart = 0:particlesByDepth[depthIdx, component]
-        push!(particles, Particle([currDay], copy(modelConfig.lat), copy(modelConfig.lon), [copy(modelConfig.depths[depthIdx])], 0,copy(component), 1, true, "A"))
+        push!(particles, Particle([currDay], copy(particlesByTimeStep.lat), copy(particlesByTimeStep.lon), [copy(modelConfig.depths[depthIdx])], 0,copy(component), 1, true, "A"))
         idxPart += 1
       end
     end
