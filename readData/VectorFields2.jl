@@ -1,6 +1,6 @@
 using NetCDF
 function VectorFields2(deltaT,currHour, currDay, VF, modelConfig, atmFilePrefix, oceanFilePrefix)
-  path = "/media/petroleo/Datos/"
+  path = "/home/andrea/Data/Datos/"
   windDeltaT = 6
   myEps = .01
   currDay = toJulianDate(currDay)
@@ -8,6 +8,7 @@ function VectorFields2(deltaT,currHour, currDay, VF, modelConfig, atmFilePrefix,
   #---------------------- read UV -------------------------------
 
   windFileNum = floor(currHour/windDeltaT)+1
+
   windFileNum2 = ceil((currHour + myEps)/windDeltaT)+1
 
   #These variables indicates if we have to read new files
@@ -29,11 +30,13 @@ function VectorFields2(deltaT,currHour, currDay, VF, modelConfig, atmFilePrefix,
     readWindT2 = true
     readOceanT2 = true
     #Read lat, lon and depth from files
+
     lat = ncread(path*readOceanFile, "Latitude")
     lon = ncread(path*readOceanFile, "Longitude")
     depths = ncread(path*readOceanFile, "Depth")
     VF.lat = lat
     VF.lon = lon
+    VF.BBOX = [minimum(VF.lat) minimum(VF.lon); maximum(VF.lat) maximum(VF.lon)]
     VF.depths = depths
     #Setting the minimum and maximum indexes for the depths of the particles
     # ------------------- depth indexes -----------------------------------
@@ -56,6 +59,7 @@ function VectorFields2(deltaT,currHour, currDay, VF, modelConfig, atmFilePrefix,
 
     VF.depthsMinMax = [findfirst(obj -> obj >= modelConfig.depths[1], VF.depths), findfirst(obj -> obj >= modelConfig.depths[end], VF.depths)]
 
+
   else
   # ------ this we check every other time that is not the first time -------------------
     #verify we haven't increase the file name
@@ -68,6 +72,7 @@ function VectorFields2(deltaT,currHour, currDay, VF, modelConfig, atmFilePrefix,
     if windFileNum2 > (24/windDeltaT) && readWindT2
       readNextDayWind = true
     end
+
     if currDay != VF.currDay
       readOceanT2 = true
     end
@@ -168,8 +173,8 @@ function VectorFields2(deltaT,currHour, currDay, VF, modelConfig, atmFilePrefix,
 
     VF.UT2 = VF.UD + ((currHour+modelConfig.timeStep)/24)*VF.UDT2minusUDT
     VF.VT2 = VF.VD + ((currHour+modelConfig.timeStep)/24)*VF.VDT2minusVDT
+    
   end
-
   #Update the current time that has already been executed (read in this case)
   VF.currDay = currDay
   VF.currHour = currHour
