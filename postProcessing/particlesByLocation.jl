@@ -1,5 +1,5 @@
 using GeometricalPredicates
-
+plotlyjs()
 function particlesByLocation(particles::Array{Particle,1}, positions::Array{Float64,2}, ratio::Float64)
   particlesByPosition = zeros(size(positions)[1])
   allPositionsAndTypes = Array{Array{Int64,1},1}(size(positions)[1])
@@ -37,10 +37,11 @@ function particlesByLocation(particles::Array{Particle,1}, positions::Array{Floa
   positionsStr = ["Position $x" for x in 1:size(positions)[1]]
   typesString = ["Type 1", "Type 2", "Type 3", "Type 4", "Type 5", "Type 6", "Type 7", "Type 8"]
   label = ["Type 1" "Type 2" "Type 3" "Type 4" "Type 5" "Type 6" "Type 7" "Type 8"]
-  plotByPositionAndType(positionsStr, typesString, allPositionsAndTypes)
+  #plotByPositionAndType(positionsStr, typesString, allPositionsAndTypes)
+  #savefig("plotByPositionAndType")
 
   plotByPosition(positionsStr, particlesByPosition)
-
+  #savefig("plotByPosition")
 
 
 
