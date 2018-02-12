@@ -6,8 +6,12 @@ type OilSpillData
   evaporate::Int64
   burned::Int64
   collected::Int64
+  subsurfDispersants::Int64
+  surfaceDispersants::Int64
   depths::Array
   barrellsPerParticle::Int64
+  lat::Array{Float64,1}
+  lon::Array{Float64,1}
 end
 
 type Decay
@@ -22,8 +26,6 @@ type modelConfig
   startDate::DateTime #Start date of the simulation in julian dates
   endDate::DateTime #End date of the simulation in julian dates
   depths::Array{Int64,1} #Array of depth to be used
-  lat::Array{Float64,1} #latitude of the spill
-  lon::Array{Float64,1} #longitude of the spill
   components::Array{Float64,2} #Array of components for each depth
   subSurfaceFraction::Array{Float64,1} #Array with the fraction of oil spilled at each subsurface depth
   decay::Decay
@@ -34,6 +36,7 @@ type modelConfig
   turbulentDiff::Float64 #Value of turbulent diffusion (When advecting particles)
   diffusion::Float64 #Variance of the diffusion (in degrees) when initializing particles
   model::String #Model used, HYCOM and ADCIRC
+  spillType::String #Type of spill, oil and simple
 end
 
 type vectorFields
@@ -71,6 +74,7 @@ type vectorFields
   depthsMinMax::Array{Int64,1} #Array of indexes corresponding to the minumum and maximum depth of the particles
   depthsIndx::Array{Int64,2} #Array of indexes corresponding to closest indexes at each depth of the particles
   depthsRelativeIndx::Array{Int64,2} #Array of indexes corresponding to closest indexes at each depth of the particles for cutted U and V
+  BBOX::Array{Float64,2}
 end
 
 type ParticlesByTimeStep
@@ -79,6 +83,8 @@ type ParticlesByTimeStep
   burned::Float64
   evaporated::Float64
   recovered::Float64
+  lat::Array{Float64,1}
+  lon::Array{Float64,1}
 end
 
 
@@ -126,4 +132,14 @@ type VectorFieldsADCIRC
   CostaY::Array{Float64,2} #Node latitude of Coastline of mesh defined by FORT.14 (Latitude)
   TR::Array{GeometricalPredicates.UnOrientedTriangle{Point2D},1} #Array of triangles
   MeshInterp::Array{Float64,2} #Interp object for future interpolation
+
+end
+
+type OilSpillDataMultiple
+  dates::DateTime
+  barrells::Array{Int64,1}
+  depths::Array{Int64,1}
+  lat::Array{Float64,1}
+  lon::Array{Float64,1}
+  barrellsPerParticle::Int64
 end
