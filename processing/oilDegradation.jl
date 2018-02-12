@@ -60,9 +60,9 @@ function oilDegradation(particles, modelConfigs, spillData, particlesByTimeStep)
           lat_p = particles[LiveParticles[partIndx]].lat[ind]
           lon_p = particles[LiveParticles[partIndx]].lon[ind]
           #Haversine formula
-          delta_lat = deg2rad.(lat_p - modelConfigs.lat)
-          delta_lon = deg2rad.(lon_p - modelConfigs.lon)
-          a = sin(delta_lat[1]/2)^2 + cos(deg2rad(lat_p))*cos(deg2rad.(modelConfigs.lat[1]))*sin(delta_lon[1]/2)^2
+          delta_lat = deg2rad.(lat_p - particlesByTimeStep.lat)
+          delta_lon = deg2rad.(lon_p - particlesByTimeStep.lon)
+          a = sin(delta_lat[1]/2)^2 + cos(deg2rad(lat_p))*cos(deg2rad.(particlesByTimeStep.lat[1]))*sin(delta_lon[1]/2)^2
           c = 2*atan(sqrt(a))*atan(sqrt(1-a))
           distanceFromSource = 6371e+03/1000 * c
           if distanceFromSource <= burning_radius
