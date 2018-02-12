@@ -1,6 +1,6 @@
 using DataFrames
-function OilSpillData(FileName::String; depth::Array{Int64,1}=[1,1000], perc::Array{Float64,1}=[1.0], barrellsPerParticle::Int64=1000)
-  File = readtable(FileName, header = false,  separator = ';')
+function oilSpillData(FileName::String, lat::Array{Float64,1}, lon::Array{Float64,1}; depth::Array{Int64,1}=[1,1000], perc::Array{Float64,1}=[1.0], barrellsPerParticle::Int64=1000)
+  File = readtable(FileName, header = true,  separator = ';')
   ArraySpillByDay = Array{OilSpillData}(length(File[1]))
 
   if length(depth) != length(perc)+1
@@ -22,8 +22,11 @@ function OilSpillData(FileName::String; depth::Array{Int64,1}=[1,1000], perc::Ar
     burned = File[idx, 5]
     evaporate = File[idx, 6]
     collected = File[idx, 7]
-    spilltemp = OilSpillData(date,barrells,evaporate,burned,collected, depth, barrellsPerParticle)
+    subsurfDispersants = File[idx, 9]
+    surfaceDispersants = File[idx, 10]
+    spilltemp = OilSpillData(date,barrells,evaporate,burned,collected, subsurfDispersants, surfaceDispersants, depth, barrellsPerParticle,lat, lon)
     ArraySpillByDay[idx] = spilltemp
   end
+
   return(ArraySpillByDay)
 end
