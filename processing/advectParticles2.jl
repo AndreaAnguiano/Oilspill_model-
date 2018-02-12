@@ -1,6 +1,5 @@
 using Interpolations
 function advectParticles2(VF, modelConfig, Particles, currDate)
-
   DeltaT = modelConfig.timeStep*3600 #Move DT to seconds
   R = 6371e+03
 # Get the index for the live particles
@@ -11,32 +10,33 @@ function advectParticles2(VF, modelConfig, Particles, currDate)
   numParticles = length(LiveParticles)
 
   #Get particles last depth
-  particleDepth = [obj.depths[end] for obj in LiveParticles]
+   particleDepth = [obj.depths[end] for obj in LiveParticles]
+  # println(particleDepth)
+  # # Reading all the positions for live particles
+   latP = zeros(numParticles)
+   lonP = zeros(numParticles)
+   numParticles = length(LiveParticles)
+  #
+   for idxPart = 1:numParticles
+     particle = LiveParticles[idxPart]
+  #   ##Get current particle
+     latP[idxPart] = particle.lat[particle.currTimeStep]
+     lonP[idxPart] = particle.lon[particle.currTimeStep]
+   end
 
-  # Reading all the positions for live particles
-  latP = zeros(numParticles)
-  lonP = zeros(numParticles)
-  numParticles = length(LiveParticles)
-
-  for idxPart = 1:numParticles
-    particle = LiveParticles[idxPart]
-    ##Get current particle
-    latP[idxPart] = particle.lat[particle.currTimeStep]
-    lonP[idxPart] = particle.lon[particle.currTimeStep]
-  end
 
   #Iterate over the different depths
   dIndx = 1
 
   for depth = modelConfig.depths
-    #Get the index for the particles at this depth
-    currPartIndex = particleDepth == depth
-    originalIndexes = find(currPartIndex)
-
-    #Get the depth indexes for the current particles
+    # #Get the depth indexes for the current particles
     currDepthRelativeIndx = VF.depthsRelativeIndx[dIndx, :]
     currDepthIndx = VF.depthsIndx[dIndx,:]
 
+    particlesIndx = find(depthIndx -> depthIndx == depth, particleDepth)
+    particlesByDepth  = LiveParticles[find(particle -> particle.depths[1] == depth, LiveParticles)]
+    latP = [particle.lat[end] for particle in particlesByDepth]
+    lonP = [particle.lon[end] for particle in particlesByDepth]
 
     #Verify we are in the surface in order to incorporate the wind contribution
     if depth == 0
@@ -76,10 +76,10 @@ function advectParticles2(VF, modelConfig, Particles, currDate)
 
     #Interpolate the U and V fields for the particles positions
 
-    Uinterp = interpolate((VF.lat, VF.lon), U, Gridded(Linear()))
-    Vinterp = interpolate((VF.lat, VF.lon), V, Gridded(Linear()))
-    UN = Uinterp[latP,lonP]
-    VN = Uinterp[latP,lonP]
+    Uinterp = interpolate((VF.lon, VF.lat), U', Gridded(Linear()))
+    Vinterp = interpolate((VF.lon, VF.lat), V', Gridded(Linear()))
+    UN = Uinterp[lonP,latP]
+    VN = Uinterp[lonP,latP]
     Upart = [UN[i,i] for i in range(1,length(lonP))]
     Vpart = [VN[i,i] for i in range(1, length(lonP))]
 
@@ -96,10 +96,10 @@ function advectParticles2(VF, modelConfig, Particles, currDate)
     Vhalf = V + (VT2 - V)/2
 
     #Interpolate VF.U and VF.V to New particles positions using VF.U at dt/2
-    UhalfInterp = interpolate((VF.lat, VF.lon), Uhalf, Gridded(Linear()))
-    VhalfInterp = interpolate((VF.lat, VF.lon), Vhalf, Gridded(Linear()))
-    UHN = UhalfInterp[tempK2lat, tempK2lon]
-    VHN = VhalfInterp[tempK2lat, tempK2lon]
+    UhalfInterp = interpolate((VF.lon, VF.lat), Uhalf', Gridded(Linear()))
+    VhalfInterp = interpolate((VF.lon, VF.lat), Vhalf', Gridded(Linear()))
+    UHN = UhalfInterp[tempK2lon, tempK2lat]
+    VHN = VhalfInterp[tempK2lon, tempK2lat]
     UhalfPart = [UHN[i,i] for i in range(1,length(lonP))]
     VhalfPart = [VHN[i,i] for i in range(1,length(lonP))]
 
@@ -115,19 +115,23 @@ function advectParticles2(VF, modelConfig, Particles, currDate)
 
     #println("NewLatP: ", newLatP)
     #Iterate over the particles and add the new positions
-    for idxPart = 1:length(LiveParticles)
+    #println("currDateAdv: ", currDate)
+    for idxPart = 1:length(particlesByDepth)
     # Get the current particle
-      particle = LiveParticles[idxPart]
+      particle = particlesByDepth[idxPart]
     #Add in one the current time step of the particle
       particle.currTimeStep = particle.currTimeStep + 1
-      push!(particle.lat, newLatP[idxPart])
       push!(particle.lon, newLonP[idxPart])
+      push!(particle.lat, newLatP[idxPart])
       #Update the next date
+
       push!(particle.dates, currDate)
       #println("particle num:", idxPart, " ", particle.lat)
       #Lifetime of the particle in hours
       particle.lifeTime = particle.lifeTime + modelConfig.timeStep
     end
+
+
     #Increment the index for the current depth value
     dIndx = dIndx + 1
   end
