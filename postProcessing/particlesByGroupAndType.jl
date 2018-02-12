@@ -1,5 +1,4 @@
-using Plots
-plotlyjs()
+
 #grupo en el caso del petroleo son evaporadas, quemadas, etc. Y tipo, son los componentes del petroleo.
 
 function particlesByGroup(particles::Array{Particle,1})
@@ -27,12 +26,14 @@ function particlesByGroup(particles::Array{Particle,1})
   end
 
   typesString = ["Type 1", "Type 2", "Type 3", "Type 4", "Type 5", "Type 6", "Type 7", "Type 8"]
-  plotDict = Dict{String,String}("A" => "Alive", "B" => "Burned", "C" => "Collected", "D" => "Degraded")
+  plotDict = Dict{String,String}("A" => "Alive", "B" => "Burned", "C" => "Collected", "D" => "Degraded", "E" => "Evaporated")
   label = ["Type 1" "Type 2" "Type 3" "Type 4" "Type 5" "Type 6" "Type 7" "Type 8"]
 
   GroupsStr = [plotDict[key] for key in keys(sort(plotDict)) if in(key, Groups)]
   plotByType(typesString, TypesAll)
-
+  savefig("plotByType")
   plotByGroupAndType(GroupsStr, GroupsAndTypes, label)
+
+  savefig("plotByGroupAndType")
   gui()
 end
