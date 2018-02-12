@@ -1,5 +1,6 @@
 using Plots
 using MAT
+using StatPlots
 pyplot()
 path = "/home/andrea/Data/Datos/"
 
@@ -26,8 +27,7 @@ function plotByType(Types::Array{String,1}, TypesAll::Array{Int64,1})
 end
 
 function plotByGroupAndType(Groups::Array{String,1}, GroupsAndTypes::Array{Int64,2}, label::Array{String,2})
-  plot(Groups, GroupsAndTypes, legend= true, color_palette= :PuBu, xlabel= "Status", ylabel = "Particles",
-   title = "Particles by status and oil type", label = label, ylims= maximum(GroupsAndTypes)+10, seriestype = :bar, tickfont=12)
+  groupedbar(Groups, GroupsAndTypes,label= label, xlabel= "Status", ylabel = "Particles",title = "Particles by status and oil type", tickfont=12 )
 end
 
 function plotByTypeAndDate(Types::Array{String,1}, TypesAndDates::Array{Float64,1} )
