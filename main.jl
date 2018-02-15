@@ -33,7 +33,6 @@ include("processing/threshold.jl")
 
 include("readData/OilSpillData.jl")
 include("readData/OilSpillDataMultiple.jl")
-include("readData/readData.jl")
 include("readData/VectorFields.jl")
 include("readData/VectorFields2.jl")
 include("readData/VectorFields3D.jl")
