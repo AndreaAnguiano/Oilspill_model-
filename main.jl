@@ -1,18 +1,55 @@
-# pyplot()
+pyplot()
 #----Run once ----
 # Pkg.add("PyPlot")
+# Pkg.add("PlotlyJS")
+# Pkg.add("GLVisualize")
+# Pkg.add("Plots")
+# Pkg.add("StatPlots")
 # Pkg.add("GeometricalPredicates")
 # Pkg.add("NetCDF")
 # Pkg.add("MAT")
 # Pkg.add("DataFrames")
 # using PyPlot
 #----initial conditions----
-# include("processing/threshold.jl")
-# include("tools/Triangulation.jl")
-#include("model/Types.jl")
-# include("OilSpillModel.jl")
-# include("readData/OilSpillData.jl")
-function main()
+include("model/Types.jl")
+
+include("Plot/PlotParticles.jl")
+
+include("postProcessing/modelStatistics.jl")
+include("postProcessing/particlesByGroupAndType.jl")
+include("postProcessing/particlesByLocation.jl")
+include("postProcessing/particlesByTypeAndDate.jl")
+
+include("processing/advectParticles.jl")
+include("processing/advectParticles2.jl")
+include("processing/advectParticles3D.jl")
+include("processing/advectParticlesADCIRC.jl")
+include("processing/initParticles.jl")
+include("processing/interp.jl")
+include("processing/interpTRI1init.jl")
+include("processing/oilDegradation.jl")
+include("processing/rotangle.jl")
+include("processing/splitByTimeStep.jl")
+include("processing/threshold.jl")
+
+include("readData/OilSpillData.jl")
+include("readData/OilSpillDataMultiple.jl")
+include("readData/readData.jl")
+include("readData/VectorFields.jl")
+include("readData/VectorFields2.jl")
+include("readData/VectorFields3D.jl")
+include("readData/VectorFieldsADCIRC.jl")
+
+include("tools/Ady.jl")
+include("tools/findTriangle.jl")
+include("tools/rotr903D.jl")
+include("tools/toJulianDate.jl")
+include("tools/Triangulation.jl")
+
+# include("Visualization/VisualizationExample.jl")
+# include("Visualization/VisualizationExample2.jl")
+
+# function main()
 
 	## Initialize variable for specific run
   Days = 3
@@ -58,10 +95,10 @@ function main()
 
   lims = [-97 -80; 20 31]
   if spillType == "simple" #multiple oil spills
-    FileName = confPath+"/ndatos_derrame.csv"
+    FileName = string(confPath,"/ndatos_derrame.csv")
     lims = [-98 -80; 18 31]
   else #one oil spill from Oil Budget Calculator (2010)
-    FileName = confPath+"/spill_data.csv"
+    FileName = string(confPath,"/spill_data.csv")
   end
 
   modelConfigs = modelConfig(startDate,endDate, depths, components, subSurfaceFraction, decay, timeStep, initPartSize, totComponents, windContrib, turbulentDiff, diffusion, model, spillType)
@@ -81,8 +118,8 @@ function main()
   #writedlm("particleslats$days30.txt", lat)
   #writedlm("particleslons$days.txt", lon)
 
-end
-main()
+# end
+# main()
 # Profile.clear()
 # Profile.init(delay = 0.02)
 # @profile main()
