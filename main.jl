@@ -1,8 +1,21 @@
-pyplot()
+# pyplot()
+#----Run once ----
+# Pkg.add("PyPlot")
+# Pkg.add("GeometricalPredicates")
+# Pkg.add("NetCDF")
+# Pkg.add("MAT")
+# Pkg.add("DataFrames")
+# using PyPlot
 #----initial conditions----
+# include("processing/threshold.jl")
+# include("tools/Triangulation.jl")
+#include("model/Types.jl")
+# include("OilSpillModel.jl")
+# include("readData/OilSpillData.jl")
 function main()
-  Days = 3
 
+	## Initialize variable for specific run
+  Days = 3
   startDate = DateTime(2010,04,30)
   endDate =startDate + Dates.Day(Days)
   depths = [0, 400,1000]
@@ -22,7 +35,7 @@ function main()
   barrellsPerParticle = 100
 
   ArrVF1 = zeros(3)
-    ArrVF3 = zeros(3,3,3) # Initial array for vectorFields 3x3
+  ArrVF3 = zeros(3,3,3) # Initial array for vectorFields 3x3
   ArrVF2 = zeros(3,2) # Initial array for vectorFields 3x2
   ArrIntVF2 = ones(Int64,1,1)
   ArrIntVF1 = ones(Int64,1)
@@ -36,17 +49,19 @@ function main()
 
   visualize = false
   model = "hycom"
-  VF3D = false
+  VF3D = [ false ]
   positions = [[28, -88], [20, -95]]
   spillType = "oil"
   Statistics = false
 
+  confPath = "ConfigurationFiles/"
+
   lims = [-97 -80; 20 31]
   if spillType == "simple" #multiple oil spills
-    FileName = "/home/andrea/Data/Datos/ndatos_derrame.csv"
+    FileName = confPath+"/ndatos_derrame.csv"
     lims = [-98 -80; 18 31]
   else #one oil spill from Oil Budget Calculator (2010)
-    FileName = "/home/andrea/Data/Datos/spill_data.csv"
+    FileName = confPath+"/spill_data.csv"
   end
 
   modelConfigs = modelConfig(startDate,endDate, depths, components, subSurfaceFraction, decay, timeStep, initPartSize, totComponents, windContrib, turbulentDiff, diffusion, model, spillType)

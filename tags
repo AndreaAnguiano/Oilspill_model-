@@ -1,0 +1,45 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+CreateAdy (ELE::Array, …)	tools/Ady.jl	/^function CreateAdy(ELE::Array{Int64,2})$/;"	f
+SplitByTimeStep (ParticlesByTimeStep, …)	processing/splitByTimeStep.jl	/^function SplitByTimeStep(ParticlesByTimeStep, spillData, modelConfigs, Day)$/;"	f
+VectorFields (deltaT, …)	readData/VectorFields.jl	/^function VectorFields(deltaT,currHour, currDay, VF, modelConfig, atmFilePrefix, oceanFilePrefix)$/;"	f
+VectorFields2 (deltaT, …)	readData/VectorFields2.jl	/^function VectorFields2(deltaT,currHour, currDay, VF, modelConfig, atmFilePrefix, oceanFilePrefix)$/;"	f
+VectorFields3D (deltaT, …)	readData/VectorFields3D.jl	/^function VectorFields3D(deltaT,currHour, currDay, VF, modelConfig, atmFilePrefix, oceanFilePrefix)$/;"	f
+advectParticles (VF, …)	processing/advectParticles.jl	/^function advectParticles(VF, modelConfig, Particles, currDate)$/;"	f
+advectParticles2 (VF, …)	processing/advectParticles2.jl	/^function advectParticles2(VF, modelConfig, Particles, currDate)$/;"	f
+advectParticlesADCIRC (VF::VectorFieldsADCIRC, …)	processing/advectParticlesADCIRC.jl	/^function advectParticlesADCIRC(VF::VectorFieldsADCIRC, modelConfig::modelConfig, Particles::Array{Particle,1}, currDate::DateTime)$/;"	f
+findTriangle (particle::Particle, …)	tools/findTriangle.jl	/^function findTriangle(particle::Particle, TR::Array{GeometricalPredicates.UnOrientedTriangle{Point2D},1})$/;"	f
+initParticles (particles, …)	processing/initParticles.jl	/^function initParticles(particles, spillData, particlesByTimeStep, modelConfig, currDay, currHour)$/;"	f
+interp (TR, …)	processing/interp.jl	/^function interp(TR, particle::Particle, VF::VectorFieldsADCIRC, VFvar)$/;"	f
+interpTRI1init (lon::Array, …)	processing/interpTRI1init.jl	/^function interpTRI1init(lon::Array{Float64,1}, lat::Array{Float64,1}, Uin::Array{Float64,2})$/;"	f
+main	main.jl	/^function main()$/;"	f
+modelStatistics (particles::Array, …)	postProcessing/modelStatistics.jl	/^function modelStatistics(particles::Array{Particle,1}, positions::Array{Float64,2},ratio::Float64)$/;"	f
+oilDegradation (particles, …)	processing/oilDegradation.jl	/^function oilDegradation(particles, modelConfigs, spillData, particlesByTimeStep)$/;"	f
+oilSpillData (FileName::String, …)	readData/OilSpillData.jl	/^function oilSpillData(FileName::String, lat::Array{Float64,1}, lon::Array{Float64,1}; depth::Array{Int64,1}=[1,1000], perc::Array{Float64,1}=[1.0], barrellsPerParticle::Int64=1000)$/;"	f
+oilSpillDataMultiple (FileName::String, …)	readData/OilSpillDataMultiple.jl	/^function oilSpillDataMultiple(FileName::String; depth::Array{Int64,1}=[1,1000], perc::Array{Float64,1}=[1.0], barrellsPerParticle::Int64=1000, rows::Int64 =8)$/;"	f
+oilSpillModel (modelConfigs, …)	OilSpillModel.jl	/^function oilSpillModel(modelConfigs, FileName, ArrVF3, ArrVF2, ArrVF1,ArrIntVF2,ArrIntVF1, ArrTR,ArrDepthIndx, startDate, endDate, visualize, deltaT, lat, lon,VF3D,positions, barrellsPerParticle, lims)$/;"	f
+particlesByGroup (particles::Array, …)	postProcessing/particlesByGroupAndType.jl	/^function particlesByGroup(particles::Array{Particle,1})$/;"	f
+particlesByLocation (particles::Array, …)	postProcessing/particlesByLocation.jl	/^function particlesByLocation(particles::Array{Particle,1}, positions::Array{Float64,2}, ratio::Float64)$/;"	f
+particlesByTypeAndDate (particles::Array, …)	postProcessing/particlesByTypeAndDate.jl	/^function particlesByTypeAndDate(particles::Array{Particle,1},timeStep::Int64)$/;"	f
+plotByGroup (Groups::Array, …)	Plot/PlotParticles.jl	/^function plotByGroup(Groups::Array{String,1}, GroupsAll::Array{Int64,1})$/;"	f
+plotByGroupAndType (Groups::Array, …)	Plot/PlotParticles.jl	/^function plotByGroupAndType(Groups::Array{String,1}, GroupsAndTypes::Array{Int64,2}, label::Array{String,2})$/;"	f
+plotByPosition (position::Array, …)	Plot/PlotParticles.jl	/^function plotByPosition(position::Array{String,1}, particles::Array{Float64,1})$/;"	f
+plotByPositionAndType (PositionStr::Array, …)	Plot/PlotParticles.jl	/^function plotByPositionAndType(PositionStr::Array{String,1},Types::Array{String,1}, TypesAll::Array{Array{Int64,1},1})$/;"	f
+plotByType (Types::Array, …)	Plot/PlotParticles.jl	/^function plotByType(Types::Array{String,1}, TypesAll::Array{Int64,1})$/;"	f
+plotByTypeAndDate (Types::Array, …)	Plot/PlotParticles.jl	/^function plotByTypeAndDate(Types::Array{String,1}, TypesAndDates::Array{Float64,1} )$/;"	f
+plotGulf (lims::Array, …)	Plot/PlotParticles.jl	/^function plotGulf(lims::Array{Int64,2})$/;"	f
+plotParticles2D (x::Array, …)	Plot/PlotParticles.jl	/^function plotParticles2D(x::Array{Float64,1},y::Array{Float64,1})$/;"	f
+plotParticles3D (x::Array, …)	Plot/PlotParticles.jl	/^function plotParticles3D(x::Array{Float64,1},y::Array{Float64,1},z::Array{Float64,1})$/;"	f
+profile_test (n, …)	Visualization/VisualizationExample2.jl	/^function profile_test(n)$/;"	f
+readData (FileName::String, …)	readData/readData.jl	/^function readData(FileName::String; separator=';', header=true)$/;"	f
+rotangle (U, …)	processing/rotangle.jl	/^function rotangle(U,V)$/;"	f
+rotation_func (t, …)	Visualization/VisualizationExample.jl	/^function rotation_func(t)$/;"	f
+rotr903D (matrix::Array, …)	tools/rotr903D.jl	/^function rotr903D(matrix::Array{Float32,3}, k::Int64)$/;"	f
+threshold (percentage::Int64, …)	processing/threshold.jl	/^function threshold(percentage::Int64, days_percent_decay::Array{Int64,1}, time_step::Int64)$/;"	f
+toJulianDate (Date::DateTime, …)	tools/toJulianDate.jl	/^toJulianDate(Date::DateTime) = convert(Int64, Dates.datetime2julian(Date)-Dates.datetime2julian(DateTime(Dates.year(Date)-1,12,31)))$/;"	f
+triang (VF::VectorFieldsADCIRC, …)	tools/Triangulation.jl	/^function triang(VF::VectorFieldsADCIRC, P::Array{Float64,2})$/;"	f
+vectorFieldsADCIRC (deltaT::Int64, …)	readData/VectorFieldsADCIRC.jl	/^function vectorFieldsADCIRC(deltaT::Int64, currHour::Int64, currDay::DateTime, VF::VectorFieldsADCIRC, modelConfig::modelConfig, atmFilePrefix::String, oceanFilePrefix::String, uvar::String, vvar::String)$/;"	f
