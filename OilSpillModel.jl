@@ -1,32 +1,36 @@
 
 
 
-function oilSpillModel(modelConfigs, FileName, ArrVF3, ArrVF2, ArrVF1,ArrIntVF2,ArrIntVF1, ArrTR,ArrDepthIndx, startDate, endDate, visualize, deltaT, lat, lon,VF3D,positions, barrellsPerParticle, lims)
-  #Start of all fields with the initial conditions
+function oilSpillModel(modelConfigs, FileName, ArrVF3, ArrVF2, ArrVF1,ArrIntVF2,ArrIntVF1, ArrTR,ArrDepthIndx, startDate, endDate, visualize, deltaT, lat, lon,VF3D,positions, barrellsPerParticle, lims, Statistics)
+  #----------Starting all fields with the initial conditions----------
+  #----------initalizing the oilSpill type --------------------
   if modelConfigs.spillType == "oil"
     spillData = oilSpillData(FileName, lat, lon, barrellsPerParticle = barrellsPerParticle) #Reading all the values of the spill
     positions = [positions[1]]
   elseif modelConfigs.spillType == "simple"
     spillData = oilSpillDataMultiple(FileName)
   end
-
+   #---------------- Initializing empty VF and VFCIRC type  -----------------
   VF = vectorFields(ArrVF3,ArrVF3,ArrVF3,ArrVF3,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF3,ArrVF3,ArrVF3,ArrVF3,ArrVF3,ArrVF3,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,
-   toJulianDate(startDate),0, lat, lon, ArrVF1,ArrVF1,ArrDepthIndx,ArrVF2, [1 1; 1 1]) #Initial vectorfield
+   toJulianDate(startDate),0, lat, lon, ArrVF1,ArrVF1,ArrDepthIndx,ArrVF2, [1 1; 1 1])
 
   VFADCIRC = VectorFieldsADCIRC(ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,toJulianDate(startDate),0,lat,lon, ArrVF1, ArrVF1, ArrVF2,
    "atmFilePrefix", "oceanFilePrefix", "uvar", "vvar", ArrIntVF2,ArrIntVF2,ArrIntVF2, ArrVF2, ArrVF2,ArrTR,ArrVF2 )
-
-  particlesByTimeStep = ParticlesByTimeStep[]#Initial particlesByTimeStep
-  particles = Particle[]  #Start array of particles empty
+  #-----------Initializing empty particlesByTimeStep array--------------
+  particlesByTimeStep = ParticlesByTimeStep[]
+  #------------ Initializing empty array of particles ------------------
+  particles = Particle[]
   advectingParticles = false
+
   if visualize
     plotGulf(lims)
   end
-   for currDay in (startDate:Dates.Day(1):endDate) #
+   for currDay in (startDate:Dates.Day(1):endDate)
     #Verify we have some data in this day
     if any(obj -> obj.dates == currDay, spillData)
       advectingParticles = true #We should start to reading vector fields and advectingParticles
-      #Read from datos_derrame and init proper number of particles
+      #Read from spilldata and init proper number of particles
+    # -------------- #get daily spill quantities for position (in case of multiple spills)
       for position in range(1,length(positions))
         splitByTimeStep = SplitByTimeStep(particlesByTimeStep, spillData, modelConfigs, currDay)
       end
@@ -36,8 +40,8 @@ function oilSpillModel(modelConfigs, FileName, ArrVF3, ArrVF2, ArrVF1,ArrIntVF2,
       for currHour in range(0,deltaT,convert(Int64,24/deltaT))
 
         if advectingParticles
+    #-------------
           for position in range(1,length(positions))
-            #println("position: ",position)
             Particles = initParticles(particles, spillData, particlesByTimeStep[position], modelConfigs, currDay, currHour)
 
           end
@@ -91,5 +95,10 @@ function oilSpillModel(modelConfigs, FileName, ArrVF3, ArrVF2, ArrVF1,ArrIntVF2,
 
       end
   end
+
+  if Statistics
+    modelStatistics(particles,[28.0 -88.0; 38.0 -88.0; 37.8 -88], 10.0 )
+  end
+
   return particles
 end

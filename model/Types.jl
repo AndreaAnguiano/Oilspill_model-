@@ -2,7 +2,8 @@
 using GeometricalPredicates
 type OilSpillData
   dates::DateTime
-  barrells::Array
+  barrells::Array{Int64,1}
+  inLandRecovery::Int64
   evaporate::Int64
   burned::Int64
   collected::Int64
@@ -142,4 +143,16 @@ type OilSpillDataMultiple
   lat::Array{Float64,1}
   lon::Array{Float64,1}
   barrellsPerParticle::Int64
+end
+
+type DailySpill
+  date::DateTime
+  net::Array{Int64,1}
+  surface::Array{Float64,1}
+  subSurf::Array{Float64,1}
+  burned::Array{Float64,1}
+  evaporated::Array{Float64,1}
+  collected::Array{Float64,1}
+  surfaceNatrDispr::Array{Float64,1}
+  surfaceChemDispr::Array{Float64,1}
 end

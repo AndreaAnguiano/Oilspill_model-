@@ -26,7 +26,7 @@ function VectorFields(deltaT,currHour, currDay, VF, modelConfig, atmFilePrefix, 
       VF.lat = lat
       VF.lon = lon
       VF.depths = depths
-
+      print(any(x -> isnan(x) == true, Vf.lat))
       #Setting the minimum and maximum indexes for the depths of the particles
 
       idx = 1

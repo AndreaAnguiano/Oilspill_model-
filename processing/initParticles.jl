@@ -5,28 +5,27 @@ function initParticles(particles, spillData, particlesByTimeStep, modelConfig, c
 
   idxDepth = 1 #Auxiliar index of the current depth
   particlesByDepth = zeros(size(modelConfig.components))
-  #println(size(particlesByDepth), particlesByTimeStep.partSub)
+
 
   if any(x-> x ==0, modelConfig.depths)
     for depth = modelConfig.depths
-      #println(depth)
+
       if depth == 0
         particlesByDepth[idxDepth,:] = ceil.(modelConfig.components[idxDepth,:].*particlesByTimeStep.particles)
       else
-        #println("particlesByDepth: ", particlesByDepth, length(particlesByDepth),"...", "modelConfig.components: ", modelConfig.components[idxDepth,:], "*particlesByTimeStep.partSub: ",particlesByTimeStep.partSub[idxDepth-1], " idxDepth: ",idxDepth, "---")
 
         particlesByDepth[idxDepth,:] = ceil.(modelConfig.components[idxDepth,:].*particlesByTimeStep.partSub[idxDepth-1])
       end
       idxDepth = idxDepth + 1
     end
   else
-    #cuando no se tiene la profundidad 0 en el modelo 
+    #cuando no se tiene la profundidad 0 en el modelo
     for depth = modelConfig.depths
       particlesByDepth[idxDepth,:] = ceil.(modelConfig.components[idxDepth,:].*particlesByTimeStep.partSub[idxDepth])
       idxDepth = idxDepth + 1
      end
   end
-# #
+
   for depthIdx = 1:length(modelConfig.depths)
     for component = 1:totComp
       for numPart = 0:particlesByDepth[depthIdx, component]
