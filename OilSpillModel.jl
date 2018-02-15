@@ -11,7 +11,7 @@ function oilSpillModel(modelConfigs, FileName, ArrVF3, ArrVF2, ArrVF1,ArrIntVF2,
     spillData = oilSpillDataMultiple(FileName)
   end
    #---------------- Initializing empty VF and VFCIRC type  -----------------
-  VF = vectorFields(ArrVF3,ArrVF3,ArrVF3,ArrVF3,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF3,ArrVF3,ArrVF3,ArrVF3,ArrVF3,ArrVF3,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,
+  VF = @enter vectorFields(ArrVF3,ArrVF3,ArrVF3,ArrVF3,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF3,ArrVF3,ArrVF3,ArrVF3,ArrVF3,ArrVF3,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,
    toJulianDate(startDate),0, lat, lon, ArrVF1,ArrVF1,ArrDepthIndx,ArrVF2, [1 1; 1 1])
 
   VFADCIRC = VectorFieldsADCIRC(ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,toJulianDate(startDate),0,lat,lon, ArrVF1, ArrVF1, ArrVF2,
@@ -57,7 +57,7 @@ function oilSpillModel(modelConfigs, FileName, ArrVF3, ArrVF2, ArrVF1,ArrIntVF2,
               Particles  = oilDegradation(particles, modelConfigs, spillData, particlesByTimeStep, lat, lon)
 
             else
-                vF = VectorFields2(deltaT,currHour,currDay, VF, modelConfigs, atmFilePrefix, oceanFilePrefix)
+                vF = @enter VectorFields2(deltaT,currHour,currDay, VF, modelConfigs, atmFilePrefix, oceanFilePrefix)
                 println("CurrHour = ", currHour, " CurrDay = ", currDay)
                 #Advecting particles
                 Particles = advectParticles2(VF, modelConfigs, particles, currDay)

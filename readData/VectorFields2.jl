@@ -1,5 +1,6 @@
 using NetCDF
 function VectorFields2(deltaT,currHour, currDay, VF, modelConfig, atmFilePrefix, oceanFilePrefix)
+  # path = "/home/andrea/Data/Datos/"
   path = "/home/andrea/Data/Datos/"
   windDeltaT = 6
   myEps = .01
@@ -173,7 +174,7 @@ function VectorFields2(deltaT,currHour, currDay, VF, modelConfig, atmFilePrefix,
 
     VF.UT2 = VF.UD + ((currHour+modelConfig.timeStep)/24)*VF.UDT2minusUDT
     VF.VT2 = VF.VD + ((currHour+modelConfig.timeStep)/24)*VF.VDT2minusVDT
-    
+
   end
   #Update the current time that has already been executed (read in this case)
   VF.currDay = currDay

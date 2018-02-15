@@ -1,8 +1,8 @@
-pyplot()
 #----Run once ----
 # Pkg.add("PyPlot")
 # Pkg.add("PlotlyJS")
 # Pkg.add("GLVisualize")
+# Pkg.add("CSV")
 # Pkg.add("Plots")
 # Pkg.add("StatPlots")
 # Pkg.add("GeometricalPredicates")
@@ -44,13 +44,15 @@ include("tools/rotr903D.jl")
 include("tools/toJulianDate.jl")
 include("tools/Triangulation.jl")
 
+include("OilSpillModel.jl")
+
+
 # include("Visualization/VisualizationExample.jl")
 # include("Visualization/VisualizationExample2.jl")
 
 # function main()
 
-	## Initialize variable for specific run
-  Days = 3
+	## Initialize variable for specific run Days = 3
   startDate = DateTime(2010,04,30)
   endDate =startDate + Dates.Day(Days)
   depths = [0, 400,1000]
@@ -89,7 +91,7 @@ include("tools/Triangulation.jl")
   spillType = "oil"
   Statistics = false
 
-  confPath = "ConfigurationFiles/"
+  confPath = "./ConfigurationFiles"
 
   lims = [-97 -80; 20 31]
   if spillType == "simple" #multiple oil spills
@@ -100,7 +102,7 @@ include("tools/Triangulation.jl")
   end
 
   modelConfigs = modelConfig(startDate,endDate, depths, components, subSurfaceFraction, decay, timeStep, initPartSize, totComponents, windContrib, turbulentDiff, diffusion, model, spillType)
-  particles = oilSpillModel(modelConfigs, FileName, ArrVF3, ArrVF2, ArrVF1,ArrIntVF2,ArrIntVF1,ArrTR, ArrDepthIndx, startDate, endDate, visualize, timeStep, lat, lon, VF3D, positions, barrellsPerParticle, lims)
+  particles = oilSpillModel(modelConfigs, FileName, ArrVF3, ArrVF2, ArrVF1,ArrIntVF2,ArrIntVF1,ArrTR, ArrDepthIndx, startDate, endDate, visualize, timeStep, lat, lon, VF3D, positions, barrellsPerParticle, lims, Statistics)
 
   if Statistics
     modelStatistics(particles,[28.0 -88.0; 38.0 -88.0; 37.8 -88], 10.0 )
