@@ -1,7 +1,5 @@
-
-
-
-function oilSpillModel(modelConfigs, FileName, ArrVF3, ArrVF2, ArrVF1,ArrIntVF2,ArrIntVF1, ArrTR,ArrDepthIndx, startDate, endDate, visualize, deltaT, lat, lon,VF3D,positions, barrellsPerParticle, lims, Statistics)
+function oilSpillModel(dataPath, configPath, modelConfigs, FileName, ArrVF3, ArrVF2, ArrVF1,ArrIntVF2,ArrIntVF1, ArrTR,ArrDepthIndx,
+                        startDate, endDate, visualize, deltaT, lat, lon,VF3D,positions, barrellsPerParticle, lims, Statistics)
   #----------Starting all fields with the initial conditions----------
   #----------initalizing the oilSpill type --------------------
   if modelConfigs.spillType == "oil"
@@ -11,7 +9,7 @@ function oilSpillModel(modelConfigs, FileName, ArrVF3, ArrVF2, ArrVF1,ArrIntVF2,
     spillData = oilSpillDataMultiple(FileName)
   end
    #---------------- Initializing empty VF and VFCIRC type  -----------------
-  VF = @enter vectorFields(ArrVF3,ArrVF3,ArrVF3,ArrVF3,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF3,ArrVF3,ArrVF3,ArrVF3,ArrVF3,ArrVF3,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,
+  VF = vectorFields(ArrVF3,ArrVF3,ArrVF3,ArrVF3,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF3,ArrVF3,ArrVF3,ArrVF3,ArrVF3,ArrVF3,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,
    toJulianDate(startDate),0, lat, lon, ArrVF1,ArrVF1,ArrDepthIndx,ArrVF2, [1 1; 1 1])
 
   VFADCIRC = VectorFieldsADCIRC(ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,toJulianDate(startDate),0,lat,lon, ArrVF1, ArrVF1, ArrVF2,
@@ -23,7 +21,7 @@ function oilSpillModel(modelConfigs, FileName, ArrVF3, ArrVF2, ArrVF1,ArrIntVF2,
   advectingParticles = false
 
   if visualize
-    plotGulf(lims)
+    plotGulf(configPath, lims)
   end
    for currDay in (startDate:Dates.Day(1):endDate)
     #Verify we have some data in this day
@@ -57,7 +55,7 @@ function oilSpillModel(modelConfigs, FileName, ArrVF3, ArrVF2, ArrVF1,ArrIntVF2,
               Particles  = oilDegradation(particles, modelConfigs, spillData, particlesByTimeStep, lat, lon)
 
             else
-                vF = @enter VectorFields2(deltaT,currHour,currDay, VF, modelConfigs, atmFilePrefix, oceanFilePrefix)
+                vF = VectorFields2(dataPath, deltaT,currHour,currDay, VF, modelConfigs, atmFilePrefix, oceanFilePrefix)
                 println("CurrHour = ", currHour, " CurrDay = ", currDay)
                 #Advecting particles
                 Particles = advectParticles2(VF, modelConfigs, particles, currDay)

@@ -1,7 +1,8 @@
 using NetCDF
-function VectorFields2(deltaT,currHour, currDay, VF, modelConfig, atmFilePrefix, oceanFilePrefix)
+function VectorFields2(path, deltaT,currHour, currDay, VF, modelConfig, atmFilePrefix, oceanFilePrefix)
   # path = "/home/andrea/Data/Datos/"
-  path = "/home/andrea/Data/Datos/"
+  # path = "/home/olmozavala/Desktop/PETROLEO_OUT/"
+
   windDeltaT = 6
   myEps = .01
   currDay = toJulianDate(currDay)

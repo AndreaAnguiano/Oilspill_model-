@@ -9,6 +9,7 @@
 # Pkg.add("NetCDF")
 # Pkg.add("MAT")
 # Pkg.add("DataFrames")
+Pkg.add("ProfileView")
 # using PyPlot
 #----initial conditions----
 include("model/Types.jl")
@@ -43,16 +44,17 @@ include("tools/findTriangle.jl")
 include("tools/rotr903D.jl")
 include("tools/toJulianDate.jl")
 include("tools/Triangulation.jl")
+include("tools/roundStat.jl")
 
 include("OilSpillModel.jl")
-
 
 # include("Visualization/VisualizationExample.jl")
 # include("Visualization/VisualizationExample2.jl")
 
-# function main()
+function main()
 
 	## Initialize variable for specific run Days = 3
+  Days = 3
   startDate = DateTime(2010,04,30)
   endDate =startDate + Dates.Day(Days)
   depths = [0, 400,1000]
@@ -84,25 +86,26 @@ include("OilSpillModel.jl")
   lat = [28.0]
   lon = [-88.0]
 
-  visualize = false
+  visualize = true
   model = "hycom"
-  VF3D = [ false ]
+  VF3D =  false
   positions = [[28, -88], [20, -95]]
   spillType = "oil"
   Statistics = false
 
-  confPath = "./ConfigurationFiles"
+  configPath = "./ConfigurationFiles/"
+  dataPath = "/home/olmozavala/Desktop/PETROLEO_OUT/"
 
   lims = [-97 -80; 20 31]
   if spillType == "simple" #multiple oil spills
-    FileName = string(confPath,"/ndatos_derrame.csv")
+    FileName = string(configPath,"/ndatos_derrame.csv")
     lims = [-98 -80; 18 31]
   else #one oil spill from Oil Budget Calculator (2010)
-    FileName = string(confPath,"/spill_data.csv")
+    FileName = string(configPath,"/spill_data.csv")
   end
 
   modelConfigs = modelConfig(startDate,endDate, depths, components, subSurfaceFraction, decay, timeStep, initPartSize, totComponents, windContrib, turbulentDiff, diffusion, model, spillType)
-  particles = oilSpillModel(modelConfigs, FileName, ArrVF3, ArrVF2, ArrVF1,ArrIntVF2,ArrIntVF1,ArrTR, ArrDepthIndx, startDate, endDate, visualize, timeStep, lat, lon, VF3D, positions, barrellsPerParticle, lims, Statistics)
+  particles = oilSpillModel(dataPath, configPath, modelConfigs, FileName, ArrVF3, ArrVF2, ArrVF1,ArrIntVF2,ArrIntVF1,ArrTR, ArrDepthIndx, startDate, endDate, visualize, timeStep, lat, lon, VF3D, positions, barrellsPerParticle, lims, Statistics)
 
   if Statistics
     modelStatistics(particles,[28.0 -88.0; 38.0 -88.0; 37.8 -88], 10.0 )
@@ -118,11 +121,11 @@ include("OilSpillModel.jl")
   #writedlm("particleslats$days30.txt", lat)
   #writedlm("particleslons$days.txt", lon)
 
-# end
-# main()
-# Profile.clear()
-# Profile.init(delay = 0.02)
-# @profile main()
-#using ProfileView
-#ProfileView.view()
-#@time main()
+end
+main()
+ Profile.clear()
+ Profile.init(delay = 0.02)
+ @profile main()
+using ProfileView
+ProfileView.view()
+# @time main()

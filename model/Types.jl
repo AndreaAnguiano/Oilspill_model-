@@ -4,7 +4,7 @@ type OilSpillData
   dates::DateTime
   barrells::Array{Int64,1}
   inLandRecovery::Int64
-  evaporate::Int64
+  evaporate::Float16
   burned::Int64
   collected::Int64
   subsurfDispersants::Int64

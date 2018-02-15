@@ -2,7 +2,7 @@ using Plots
 using MAT
 using StatPlots
 pyplot()
-path = "/home/andrea/Data/Datos/"
+# path = "/home/andrea/Data/Datos/"
 
 function plotParticles2D(x::Array{Float64,1},y::Array{Float64,1})
   plot!(x,y, seriestype=:scatter, markersize = 0.7 , legend = false, color= :blue, markerstrokecolor = :blue, xlabel = "Longitud", ylabel= "Latitud")
@@ -11,7 +11,7 @@ end
 function plotParticles3D(x::Array{Float64,1},y::Array{Float64,1},z::Array{Float64,1})
   scatter(x,y,z, color = :blue)
 end
-function plotGulf(lims::Array{Int64,2})
+function plotGulf(path::String, lims::Array{Int64,2})
   Data  = matread(path*"linea_costa_divpol.mat")
   gulf = Data["linea_costa"]
   plot(gulf[:,1], gulf[:,2], color = :black, linewidth = 1, ylims=(lims[2,1], lims[2,2]), xlims=(lims[1,1], lims[1,2]), aspect_ratio=:equal, legend = false)

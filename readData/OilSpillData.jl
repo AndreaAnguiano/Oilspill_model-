@@ -88,7 +88,18 @@ function oilSpillData(FileName::String, lat::Array{Float64,1}, lon::Array{Float6
   #oil in surface water
   surfWater = surfaceAccum - surfDegAccum
 
-  ArraySpillByDay = [OilSpillData(dates[i],[barrells[i]],inLandRecovery[i],evaporated[i],burned[i],collected[i], subsurfDispersants[i], surfaceDispersants[i], depth, barrellsPerParticle,lat, lon) for i in range(1,length(dates))]
+  # for i in range(1,length(dates))
+    # println(typeof(barrells[i]))
+    # println(typeof(inLandRecovery[i]))
+    # println(typeof(evaporated[i]))
+    # println(typeof(burned[i]))
+    # println(typeof(collected[i]))
+    # println(typeof(subsurfDispersants[i]))
+    # println(typeof(surfaceDispersants[i]))
+  # end
+
+  ArraySpillByDay = [OilSpillData(dates[i],[barrells[i]],inLandRecovery[i],evaporated[i],burned[i],collected[i], subsurfDispersants[i],
+                        surfaceDispersants[i], depth, barrellsPerParticle,lat, lon) for i in range(1,length(dates))]
 
   #Barrells to particles
 
