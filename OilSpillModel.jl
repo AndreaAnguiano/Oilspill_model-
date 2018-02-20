@@ -1,7 +1,10 @@
-function oilSpillModel(dataPath, configPath, modelConfigs, FileName, ArrVF3, ArrVF2, ArrVF1,ArrIntVF2,ArrIntVF1, ArrTR,ArrDepthIndx,
-                        startDate, endDate, visualize, deltaT, lat, lon,VF3D,positions, barrellsPerParticle, lims, Statistics)
+function oilSpillModel(dataPath::String, configPath::String, modelConfigs::modelConfig, FileName::String,
+                       ArrVF3, ArrVF2, ArrVF1,ArrIntVF2,ArrIntVF1, ArrTR,ArrDepthIndx,
+                        startDate, endDate, visualize, deltaT, lat, lon,VF3D,positions,
+                        barrellsPerParticle, lims, Statistics)
   #----------Starting all fields with the initial conditions----------
   #----------initalizing the oilSpill type --------------------
+  spillData::Array{OilSpillData} = []
   if modelConfigs.spillType == "oil"
     spillData = oilSpillData(FileName, lat, lon, barrellsPerParticle = barrellsPerParticle) #Reading all the values of the spill
     positions = [positions[1]]
@@ -9,10 +12,10 @@ function oilSpillModel(dataPath, configPath, modelConfigs, FileName, ArrVF3, Arr
     spillData = oilSpillDataMultiple(FileName)
   end
    #---------------- Initializing empty VF and VFCIRC type  -----------------
-  VF = vectorFields(ArrVF3,ArrVF3,ArrVF3,ArrVF3,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF3,ArrVF3,ArrVF3,ArrVF3,ArrVF3,ArrVF3,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,
-   toJulianDate(startDate),0, lat, lon, ArrVF1,ArrVF1,ArrDepthIndx,ArrVF2, [1 1; 1 1])
+  VF::vectorFields = vectorFields(ArrVF3,ArrVF3,ArrVF3,ArrVF3,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF3,ArrVF3,ArrVF3,ArrVF3,ArrVF3,ArrVF3,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,
+                   toJulianDate(startDate),0, lat, lon, [], [], ArrVF1,ArrVF1,ArrDepthIndx,ArrVF2, [1 1; 1 1])
 
-  VFADCIRC = VectorFieldsADCIRC(ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,toJulianDate(startDate),0,lat,lon, ArrVF1, ArrVF1, ArrVF2,
+  VFADCIRC::VectorFieldsADCIRC = VectorFieldsADCIRC(ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,ArrVF2,toJulianDate(startDate),0,lat,lon, ArrVF1, ArrVF1, ArrVF2,
    "atmFilePrefix", "oceanFilePrefix", "uvar", "vvar", ArrIntVF2,ArrIntVF2,ArrIntVF2, ArrVF2, ArrVF2,ArrTR,ArrVF2 )
   #-----------Initializing empty particlesByTimeStep array--------------
   particlesByTimeStep = ParticlesByTimeStep[]
@@ -40,8 +43,7 @@ function oilSpillModel(dataPath, configPath, modelConfigs, FileName, ArrVF3, Arr
         if advectingParticles
     #-------------
           for position in range(1,length(positions))
-            Particles = initParticles(particles, spillData, particlesByTimeStep[position], modelConfigs, currDay, currHour)
-
+            particles = initParticles(particles, spillData, particlesByTimeStep[position], modelConfigs, currDay, currHour)
           end
           if modelConfigs.model == "hycom"
             atmFilePrefix = "Dia_" #File prefix for the atmospheric netcdf files
@@ -50,18 +52,21 @@ function oilSpillModel(dataPath, configPath, modelConfigs, FileName, ArrVF3, Arr
               vF = VectorFields3D(deltaT,currHour,currDay, VF, modelConfigs, atmFilePrefix, oceanFilePrefix)
               println("CurrHour = ", currHour, " CurrDay = ", currDay)
               #Advecting particles
-              Particles = advectParticles3D(VF, modelConfigs, particles, currDay)
+              particles = advectParticles3D(VF, modelConfigs, particles, currDay)
               #DegradingParticles
-              Particles  = oilDegradation(particles, modelConfigs, spillData, particlesByTimeStep, lat, lon)
+              particles  = oilDegradation(particles, modelConfigs, spillData, particlesByTimeStep, lat, lon)
 
             else
                 vF = VectorFields2(dataPath, deltaT,currHour,currDay, VF, modelConfigs, atmFilePrefix, oceanFilePrefix)
+                # vF = @enter VectorFields2(dataPath, deltaT,currHour,currDay, VF, modelConfigs, atmFilePrefix, oceanFilePrefix)
                 println("CurrHour = ", currHour, " CurrDay = ", currDay)
                 #Advecting particles
-                Particles = advectParticles2(VF, modelConfigs, particles, currDay)
+                # particles = @enter advectParticles2(VF, modelConfigs, particles, currDay)
+                particles = advectParticles2(VF, modelConfigs, particles, currDay)
                 #DegradingParticles
                 for position in range(1,length(positions))
-                  Particles  = oilDegradation(particles, modelConfigs, spillData, particlesByTimeStep[position])
+                    LiveParticles::Array{Int64,1} = find(obj -> obj.isAlive == true, particles)
+                    particles  = oilDegradation(particles, modelConfigs, spillData, particlesByTimeStep[position])
                 end
             end
 
@@ -72,7 +77,7 @@ function oilSpillModel(dataPath, configPath, modelConfigs, FileName, ArrVF3, Arr
             vvar = "v-vel"
             vF = vectorFieldsADCIRC(deltaT,currHour,currDay,VFADCIRC, modelConfigs, atmFilePrefixADCIRC, oceanFilePrefixADCIRC, uvar, vvar)
             println("CurrHour = ", currHour, " CurrDay = ", currDay )
-            Particles = advectParticlesADCIRC(VFADCIRC, modelConfigs, particles, currDay)
+            particles = advectParticlesADCIRC(VFADCIRC, modelConfigs, particles, currDay)
 
 
           end

@@ -4,7 +4,7 @@ type OilSpillData
   dates::DateTime
   barrells::Array{Int64,1}
   inLandRecovery::Int64
-  evaporate::Float16
+  evaporate::Float64
   burned::Int64
   collected::Int64
   subsurfDispersants::Int64
@@ -38,6 +38,7 @@ type modelConfig
   diffusion::Float64 #Variance of the diffusion (in degrees) when initializing particles
   model::String #Model used, HYCOM and ADCIRC
   spillType::String #Type of spill, oil and simple
+  bbox::Array{Float64,1}
 end
 
 type vectorFields
@@ -71,6 +72,8 @@ type vectorFields
   currHour::Int64 #Current hour of the model
   lat::Array{Float64,1}
   lon::Array{Float64,1}
+  latIdx::Array{Int64,1}
+  lonIdx::Array{Int64,1}
   depths::Array{Float64,1} #Array of depths corresponding to U and V
   depthsMinMax::Array{Int64,1} #Array of indexes corresponding to the minumum and maximum depth of the particles
   depthsIndx::Array{Int64,2} #Array of indexes corresponding to closest indexes at each depth of the particles

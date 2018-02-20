@@ -34,4 +34,6 @@ function initParticles(particles, spillData, particlesByTimeStep, modelConfig, c
       end
     end
    end
- end
+
+   return particles
+ end # initParticles

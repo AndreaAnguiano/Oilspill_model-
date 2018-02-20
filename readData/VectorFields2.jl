@@ -36,8 +36,20 @@ function VectorFields2(path, deltaT,currHour, currDay, VF, modelConfig, atmFileP
     lat = ncread(path*readOceanFile, "Latitude")
     lon = ncread(path*readOceanFile, "Longitude")
     depths = ncread(path*readOceanFile, "Depth")
-    VF.lat = lat
-    VF.lon = lon
+
+    latIdx = find(obj -> (obj >= modelConfig.bbox[2] && obj <= modelConfig.bbox[4]), lat)
+    lonIdx = find(obj -> (obj >= modelConfig.bbox[1] && obj <= modelConfig.bbox[3]), lon)
+    # It seems that lon comes flipped
+    sizeLon = size(lon)[1]
+    lonIdx = sizeLon - lonIdx
+    lonIdx = lonIdx[end:-1:1]
+
+    VF.lat = lat[latIdx]
+    VF.lon = lon[lonIdx]
+
+    VF.latIdx = latIdx
+    VF.lonIdx = lonIdx
+
     VF.BBOX = [minimum(VF.lat) minimum(VF.lon); maximum(VF.lat) maximum(VF.lon)]
     VF.depths = depths
     #Setting the minimum and maximum indexes for the depths of the particles
@@ -65,7 +77,6 @@ function VectorFields2(path, deltaT,currHour, currDay, VF, modelConfig, atmFileP
   else
   # ------ this we check every other time that is not the first time -------------------
     #verify we haven't increase the file name
-
     if floor(currHour/windDeltaT) != floor(currHour/windDeltaT)
       readWindT2 = true
     end
@@ -97,15 +108,16 @@ function VectorFields2(path, deltaT,currHour, currDay, VF, modelConfig, atmFileP
   #verify if we need to read the winds and currents for the current day
   if firstRead
     #reading currents for current day
-    T1 = ncread(path*readOceanFile, "U", [1, 1, VF.depthsMinMax[1]], [-1,-1,VF.depthsMinMax[2]-VF.depthsMinMax[1]+1])
-    T2 = ncread(path*readOceanFile, "V", [1, 1, VF.depthsMinMax[1]], [-1,-1, VF.depthsMinMax[2]-VF.depthsMinMax[1]+1])
-    #Cut U and V to the only depth levels that we are going to use
+    T1 = ncread(path*readOceanFile, "U", [VF.lonIdx[1], VF.latIdx[1], VF.depthsMinMax[1]], [VF.lonIdx[end]-VF.lonIdx[1]+1,VF.latIdx[end]-VF.latIdx[1]+1,VF.depthsMinMax[2]-VF.depthsMinMax[1]+1])
+    T2 = ncread(path*readOceanFile, "V", [VF.lonIdx[1], VF.latIdx[1], VF.depthsMinMax[1]], [VF.lonIdx[end]-VF.lonIdx[1]+1,VF.latIdx[end]-VF.latIdx[1]+1,VF.depthsMinMax[2]-VF.depthsMinMax[1]+1])
+
+    #Cut U and V to the only depth levels that we are going to us-VF.lonIdx[1]e
     VF.UD = flipdim(rotr903D(T1[:,:,cutIndx],1),3)
     VF.VD = flipdim(rotr903D(T2[:,:,cutIndx],1),3)
     #reading winds for current day
 
-    TempUW = ncread(path*readWindFile, "U_Viento")
-    TempVW = ncread(path*readWindFile, "V_Viento")
+    TempUW = ncread(path*readWindFile, "U_Viento", [VF.lonIdx[1], VF.latIdx[1]], [VF.lonIdx[end]-VF.lonIdx[1]+1,VF.latIdx[end]-VF.latIdx[1]+1])
+    TempVW = ncread(path*readWindFile, "V_Viento", [VF.lonIdx[1], VF.latIdx[1]], [VF.lonIdx[end]-VF.lonIdx[1]+1,VF.latIdx[end]-VF.latIdx[1]+1])
     VF.UWRD, VF.VWRD = rotangle(TempUW', TempVW')
   end
   #Verify if we need to read the winds for the next day
@@ -114,8 +126,8 @@ function VectorFields2(path, deltaT,currHour, currDay, VF, modelConfig, atmFileP
       VF.UWRD = VF.UWRDT2
       VF.VWRD = VF.VWRDT2
     end
-    TempUW = ncread(path*readWindFileT2, "U_Viento")
-    TempVW = ncread(path*readWindFileT2, "V_Viento")
+    TempUW = ncread(path*readWindFileT2, "U_Viento", [VF.lonIdx[1], VF.latIdx[1]], [VF.lonIdx[end]-VF.lonIdx[1]+1,VF.latIdx[end]-VF.latIdx[1]+1])
+    TempVW = ncread(path*readWindFileT2, "V_Viento", [VF.lonIdx[1], VF.latIdx[1]], [VF.lonIdx[end]-VF.lonIdx[1]+1,VF.latIdx[end]-VF.latIdx[1]+1])
     #Obtain the next rotated winds
     VF.UWRDT2, VF.VWRDT2 = rotangle(TempUW',TempVW')
 
@@ -150,8 +162,9 @@ function VectorFields2(path, deltaT,currHour, currDay, VF, modelConfig, atmFileP
 
   #------------------ reading and organizing the currents------------------------------
   if readOceanT2
-    T1 = ncread(path*readOceanFileT2, "U",[1, 1, VF.depthsMinMax[1]], [-1,-1,VF.depthsMinMax[2]-VF.depthsMinMax[1]+1])
-    T2 = ncread(path*readOceanFileT2, "V", [1, 1, VF.depthsMinMax[1]], [-1,-1, VF.depthsMinMax[2]-VF.depthsMinMax[1]+1])
+
+    T1 = ncread(path*readOceanFileT2, "U", [VF.lonIdx[1], VF.latIdx[1], VF.depthsMinMax[1]], [VF.lonIdx[end]-VF.lonIdx[1]+1,VF.latIdx[end]-VF.latIdx[1]+1,VF.depthsMinMax[2]-VF.depthsMinMax[1]+1])
+    T2 = ncread(path*readOceanFileT2, "V", [VF.lonIdx[1], VF.latIdx[1], VF.depthsMinMax[1]], [VF.lonIdx[end]-VF.lonIdx[1]+1,VF.latIdx[end]-VF.latIdx[1]+1,VF.depthsMinMax[2]-VF.depthsMinMax[1]+1])
     #Cut U and V to the only depth levels that we are going to use
 
     VF.UDT2 = flipdim(rotr903D(T1[:,:,cutIndx],1),3)
