@@ -1,7 +1,7 @@
 function oilSpillModel(dataPath::String, configPath::String, modelConfigs::modelConfig, FileName::String,
                        ArrVF3, ArrVF2, ArrVF1,ArrIntVF2,ArrIntVF1, ArrTR,ArrDepthIndx,
                         startDate, endDate, visualize, deltaT, lat, lon,VF3D,positions,
-                        barrellsPerParticle, lims, Statistics)
+                        barrellsPerParticle::Float64, lims, Statistics)
   #----------Starting all fields with the initial conditions----------
   #----------initalizing the oilSpill type --------------------
   spillData::Array{OilSpillData} = []
@@ -50,7 +50,7 @@ function oilSpillModel(dataPath::String, configPath::String, modelConfigs::model
             oceanFilePrefix = "archv.2010_" #File prefix for the ocean netcdf files
             if VF3D
               vF = VectorFields3D(deltaT,currHour,currDay, VF, modelConfigs, atmFilePrefix, oceanFilePrefix)
-              println("CurrHour = ", currHour, " CurrDay = ", currDay)
+              #println("CurrHour = ", currHour, " CurrDay = ", currDay)
               #Advecting particles
               particles = advectParticles3D(VF, modelConfigs, particles, currDay)
               #DegradingParticles
@@ -59,7 +59,7 @@ function oilSpillModel(dataPath::String, configPath::String, modelConfigs::model
             else
                 vF = VectorFields2(dataPath, deltaT,currHour,currDay, VF, modelConfigs, atmFilePrefix, oceanFilePrefix)
                 # vF = @enter VectorFields2(dataPath, deltaT,currHour,currDay, VF, modelConfigs, atmFilePrefix, oceanFilePrefix)
-                println("CurrHour = ", currHour, " CurrDay = ", currDay)
+                #println("CurrHour = ", currHour, " CurrDay = ", currDay)
                 #Advecting particles
                 # particles = @enter advectParticles2(VF, modelConfigs, particles, currDay)
                 particles = advectParticles2(VF, modelConfigs, particles, currDay)
@@ -76,7 +76,7 @@ function oilSpillModel(dataPath::String, configPath::String, modelConfigs::model
             uvar = "u-vel"
             vvar = "v-vel"
             vF = vectorFieldsADCIRC(deltaT,currHour,currDay,VFADCIRC, modelConfigs, atmFilePrefixADCIRC, oceanFilePrefixADCIRC, uvar, vvar)
-            println("CurrHour = ", currHour, " CurrDay = ", currDay )
+            #println("CurrHour = ", currHour, " CurrDay = ", currDay )
             particles = advectParticlesADCIRC(VFADCIRC, modelConfigs, particles, currDay)
 
 

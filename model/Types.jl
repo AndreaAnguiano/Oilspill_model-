@@ -10,7 +10,7 @@ type OilSpillData
   subsurfDispersants::Int64
   surfaceDispersants::Int64
   depths::Array
-  barrellsPerParticle::Int64
+  barrellsPerParticle::Float64
   lat::Array{Float64,1}
   lon::Array{Float64,1}
 end

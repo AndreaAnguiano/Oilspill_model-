@@ -1,6 +1,6 @@
 using DataFrames
 using CSV
-function oilSpillData(FileName::String, lat::Array{Float64,1}, lon::Array{Float64,1}; depth::Array{Int64,1}=[1,1000], perc::Array{Float64,1}=[1.0], barrellsPerParticle::Int64=1000)
+function oilSpillData(FileName::String, lat::Array{Float64,1}, lon::Array{Float64,1}; depth::Array{Int64,1}=[1,1000], perc::Array{Float64,1}=[1.0], barrellsPerParticle::Float64=1000.0)
   File = CSV.read(FileName,  delim = ';')
   ArraySpillByDay = Array{OilSpillData}(length(File[1]))
 
