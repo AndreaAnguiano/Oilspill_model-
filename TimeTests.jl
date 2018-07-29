@@ -5,7 +5,7 @@ function main(Days, barrPerPart, timeStep, depths)
     components = [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.3; 0.0 0.0 0.0 0.1 0.1 0.1 0.2 0.5; 0.0 0.0 0.0 0.0 0.0 0.1 0.2 0.7; ]
     subSurfaceFraction = [1/3, 1/3]
     initPartSize = 10
-    totComponents = 8
+    totComponents = 8 
     windContrib = 0.035
     turbulentDiff = 0.2
     diffusion = 0.005
@@ -80,24 +80,23 @@ main(1, 400.0, 12, depths)
 function timeTests()
 
     Days = 7
-    timeStep = 1
-    depths =  [0,100,1000]
-    
-    println("Running .....")
-    for particlesPerBarrel = range(1,10)
-    #for particlesPerBarrel = range(10,10)
-        println("Particles per barrel: ", particlesPerBarrel)
-        @time main(Days, 1/particlesPerBarrel,timeStep, depths)
-    end
-#    println("New set of tests..................")
-#
 #    timeStep = 1
-#    barrPerPart = 1
-#    
-#    for Days = 2:2:20
-#        println("Days: ", Days)
-#        @time main(Days, barrPerPart,timeStep, depths)
+#    depths =  [0,100,1000]
+#    #    println("Running .....")
+#    for particlesPerBarrel = range(1,10)
+#    #for particlesPerBarrel = range(10,10)
+#        println("Particles per barrel: ", particlesPerBarrel)
+#        @time main(Days, 1/particlesPerBarrel,timeStep, depths)
 #    end
+    println("New set of tests..................")
+
+    timeStep = 1
+    barrPerPart = 1.0
+    
+    for Days = 2:2:20
+        println("Days: ", Days)
+        @time main(Days, barrPerPart,timeStep, depths)
+    end
  ## -------- Test 1 -------
  #Days = 2
  #barrPerPart = 50
